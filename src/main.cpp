@@ -1,32 +1,13 @@
-#include <iostream>
+#include "Game.h"
 
-/*
-* Things to add: 
-* Cursor
-* Enemies
-* Game
-* GameObjects
-* Player
-* Primitives2D
-* Raycast
-* Shotgun
-* Text
-* Settings
-*/
-
-#include "SDL3/SDL.h"
-#include "SDL3_image/SDL_image.h"
-#include "SDL3_ttf/SDL_ttf.h"
-
-int main()
+int main(int argc, char* argv[])
 {
-	if (SDL_Init(SDL_INIT_VIDEO))
-		std::cout << "SDL3 works" << '\n';
+	Game* game = new Game();
 
-	if (TTF_Init())
-		std::cout << "TTF works" << '\n';
+	while (game->Running())
+	{
+		game->Update();
+	}
 
-	std::cout << IMG_Version() << '\n';
-	
-	return 0;
+	delete game;
 }
