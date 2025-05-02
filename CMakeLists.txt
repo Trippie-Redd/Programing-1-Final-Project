@@ -52,6 +52,15 @@ if(NOT SDL3_ttf_FOUND)
     FetchContent_MakeAvailable(SDL3_ttf)
 endif()
 
+# Add RapidJSON (header-only)
+message(STATUS "Adding RapidJSON...")
+FetchContent_Declare(
+    rapidjson
+    GIT_REPOSITORY https://github.com/Tencent/rapidjson.git
+    GIT_TAG master
+)
+FetchContent_MakeAvailable(rapidjson)
+
 # Collect source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 file(GLOB_RECURSE HEADERS "include/*.h")
@@ -79,3 +88,12 @@ target_link_libraries(${PROJECT_NAME}
     SDL3_image::SDL3_image
     SDL3_ttf::SDL3_ttf
 )
+
+# Add RapidJSON headers to include path (header-only library)
+target_include_directories(${PROJECT_NAME}
+    PRIVATE ${rapidjson_SOURCE_DIR}/include
+)
+
+# Add assets and levels directories to the binary directory
+file(COPY ${CMAKE_SOURCE_DIR}/levels DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})

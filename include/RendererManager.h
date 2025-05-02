@@ -22,7 +22,7 @@ public:
 
 private:
     // Private static instance pointer
-    static RendererManager* instance;
+    static RendererManager* s_instance;
 
     // Private renderer pointer
     SDL_Renderer* m_renderer;
@@ -31,6 +31,6 @@ private:
     RendererManager() : m_renderer(nullptr) {}
 
     // Prevent copy and assignment
-    RendererManager(const RendererManager&) = delete;
+    RendererManager(const RendererManager&)            = delete;
     RendererManager& operator=(const RendererManager&) = delete;
 };

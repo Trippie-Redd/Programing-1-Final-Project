@@ -1,70 +1,40 @@
 {
     "walls": [
         {
-            "x": 200,
-            "y": 800,
-            "width": 400,
-            "height": 40
-        },
-        {
-            "x": 700,
-            "y": 800,
-            "width": 500,
-            "height": 40
-        },
-        {
-            "x": 1300,
-            "y": 800,
-            "width": 400,
-            "height": 40
-        },
-        {
-            "x": 300,
-            "y": 600,
-            "width": 300,
-            "height": 40
-        },
-        {
-            "x": 800,
-            "y": 600,
-            "width": 200,
-            "height": 40
-        },
-        {
-            "x": 1200,
-            "y": 600,
-            "width": 300,
-            "height": 40
-        },
-        {
-            "x": 500,
-            "y": 400,
-            "width": 400,
-            "height": 40
-        },
-        {
-            "x": 1100,
-            "y": 400,
-            "width": 400,
-            "height": 40
-        },
-        {
-            "x": 0,
-            "y": 950,
-            "width": 1920,
-            "height": 40
-        },
-        {
             "x": 0,
             "y": 0,
-            "width": 40,
+            "width": 25,
             "height": 1080
         },
         {
-            "x": 1880,
+            "x": 1895,
             "y": 0,
-            "width": 40,
+            "width": 25,
             "height": 1080
+        },
+        {
+            "x": 25,
+            "y": 0,
+            "width": 860,
+            "height": 25
+        },
+        {
+            "x": 1035,
+            "y": 0,
+            "width": 860,
+            "height": 25
+        },
+        {
+            "x": 25,
+            "y": 1055,
+            "width": 860,
+            "height": 25
+        },
+        {
+            "x": 1035,
+            "y": 1055,
+            "width": 860,
+            "height": 25
         }
     ],
     "enemies": [
@@ -83,40 +53,10 @@
             "ID": 1
         },
         {
-            "x": 1450,
-            "y": 750,
-            "ammoCount": 3,
-            "ID": 2
-        },
-        {
-            "x": 350,
-            "y": 550,
-            "ammoCount": 6,
-            "ID": 3
-        },
-        {
-            "x": 900,
-            "y": 550,
-            "ammoCount": 4,
-            "ID": 4
-        },
-        {
-            "x": 1300,
-            "y": 550,
-            "ammoCount": 10,
-            "ID": 5
-        },
-        {
-            "x": 600,
-            "y": 350,
-            "ammoCount": 7,
-            "ID": 6
-        },
-        {
-            "x": 1200,
-            "y": 350,
-            "ammoCount": 15,
-            "ID": 7
+            "x": 500,
+            "y": 500,
+            "ammoCount": 8,
+            "ID":  2
         }
     ],
     "keys": [
@@ -124,15 +64,30 @@
             "x": 200,
             "y": 200,
             "ID": 0
-        },
-        {
-            "x": 700,
-            "y": 250,
-            "ID": 1
         }
     ],
     "doors": [
     ],
     "transitionBoxes": [
+        {
+            "x": 885,
+            "y": 0,
+            "width": 150,
+            "height": 25,
+            "nextLevelID": 2,
+            "nextPosX": 885,
+            "nextPosY": 100,
+            "keyID": 0
+        },
+        {
+            "x": 885,
+            "y": 1055,
+            "width": 150,
+            "height": 25,
+            "nextLevelID": 0,
+            "nextPosX": 0,
+            "nextPosY": 0,
+            "keyID": 0
+        }
     ]
 }

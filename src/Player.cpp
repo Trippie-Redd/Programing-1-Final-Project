@@ -15,7 +15,12 @@ Player::~Player() = default;
 
 // ----------------- Update/Render ------------------- //
 
-void Player::Update(const std::vector<Rect>& environment, std::vector<GameObjects::AmmoCrate>& ammoCrates, std::vector<GameObjects::Key>& keys, const Vec2& mousePos, double deltaTime)
+void Player::Update(const std::vector<Rect>& environment,
+                    std::vector<GameObjects::AmmoCrate>& ammoCrates,
+                    std::vector<GameObjects::Key>& keys, 
+                    const std::vector<GameObjects::TransitionBox>& transitionBoxes,
+                    const Vec2& mousePos, 
+                    double deltaTime)
 {
     // Decrease noise value
     m_noise = m_noise > m_hitboxRadius ? m_noise * 0.9f * deltaTime : 0.0f;
@@ -24,6 +29,7 @@ void Player::Update(const std::vector<Rect>& environment, std::vector<GameObject
     m_velocity *= 0.9f;
 
     HandleWallCollisions(environment);
+    CheckForTransitionCollisions(transitionBoxes);
     CheckForAmmoPickups(ammoCrates);
     CheckForKeyPickups(keys);
 
@@ -137,6 +143,62 @@ void Player::HandleWallCollisions(const std::vector<Rect>& environment)
     }
 }
 
+void Player::CheckForTransitionCollisions(const std::vector<GameObjects::TransitionBox>& transitionBoxes)
+{
+    for (const GameObjects::TransitionBox& box : transitionBoxes)
+    {
+        // Do nothing if player is not colliding
+        if (!CheckRectCircleCollision(box, { m_position, m_hitboxRadius })) continue;
+
+        // Check if the player should transition
+        if (m_pUnlockedGameObjects->test(static_cast<int>(GameObjects::GameObjectsEnum::Keys) * 65536 + box.keyID))
+        {
+            // Make sure player is in the right position
+            m_position = box.nextPos;
+
+            // Load new level
+
+        }
+        else
+        {
+            // Find closest point on wall to player center
+            Vec2 closest(
+                std::clamp(m_position.x, box.min.x, box.max.x),
+                std::clamp(m_position.y, box.min.y, box.max.y)
+            );
+
+            // Calculate penetration vector
+            Vec2 penetrationVector = m_position - closest;
+            float distance = penetrationVector.Length();
+
+            // Normalize and scale by penetration depth
+            Vec2 correction(Vec2::Zero());
+            if (distance > 0)
+            {
+                float penetrationDepth = m_hitboxRadius - distance;
+                if (penetrationDepth > 0)
+                {
+                    correction = penetrationVector.Normalized() * penetrationDepth;
+                }
+            }
+
+            // Apply the correction vector
+            m_position += correction;
+
+            // Calculate surface normal based on correction
+            Vec2 surfaceNormal = correction.Normalized();
+
+            // Calculate and apply slide velocity if moving into the surface
+            float dotProduct = Vec2::Dot(m_velocity, surfaceNormal);
+            if (dotProduct < 0)
+            {
+                m_velocity -= surfaceNormal * dotProduct;
+                m_velocity *= 0.8f; // Apply friction
+            }
+        }
+    }
+}
+
 void Player::CheckForAmmoPickups(std::vector<GameObjects::AmmoCrate>& ammoCrates)
 {
     // Don't pickup if ammo is already maxed out
@@ -150,7 +212,7 @@ void Player::CheckForAmmoPickups(std::vector<GameObjects::AmmoCrate>& ammoCrates
 
             // Add ammoCrate to m_unlockedGameObjects in Game class
             // Change this, do not pass in 0
-            UnlockGameObject(0, ammoCrates[i].ID);
+            UnlockGameObject(GameObjects::GameObjectsEnum::AmmoCrates, ammoCrates[i].ID);
 
             // Remove object from list
             ammoCrates.erase(ammoCrates.begin() + i);
@@ -168,7 +230,7 @@ void Player::CheckForKeyPickups(std::vector<GameObjects::Key>& keys)
         {
             // Add ammoCrate to m_unlockedGameObjects in Game class
             // Change this, do not pass in 1
-            UnlockGameObject(1, keys[i].ID);
+            UnlockGameObject(GameObjects::GameObjectsEnum::Keys, keys[i].ID);
 
             // Remove object from list
             keys.erase(keys.begin() + i);
@@ -178,7 +240,7 @@ void Player::CheckForKeyPickups(std::vector<GameObjects::Key>& keys)
     }
 }
 
-void Player::UnlockGameObject(int type, uint16_t ID)
+void Player::UnlockGameObject(GameObjects::GameObjectsEnum type, uint16_t ID)
 {
     if (m_pUnlockedGameObjects == nullptr)
     {
@@ -186,5 +248,5 @@ void Player::UnlockGameObject(int type, uint16_t ID)
         return;
     }
 
-    m_pUnlockedGameObjects[(UINT16_MAX * type) + ID] = true;
+    m_pUnlockedGameObjects->set(static_cast<int>(type) * 65536 + ID);
 }

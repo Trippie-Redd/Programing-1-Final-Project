@@ -24,9 +24,20 @@ bool Text::RenderTexture() const
 
 bool Text::InitTextEngine()
 {
-    if (!TTF_Init()) return false;
-    s_font = TTF_OpenFont("./assets/VCR_Font.ttf", 10.0f);
+	if (!TTF_Init())
+	{
+		std::cerr << "TTF_Init for InitTextEngine could not be created! Error: " << SDL_GetError() << '\n';
+		return false;
+	}
 
+    s_font = TTF_OpenFont("./assets/VCR_Font.ttf", 10.0f);
+	if (!s_font)
+	{
+		std::cerr << "TTF_OpenFont for InitTextEngine failed! Error: " << SDL_GetError() << '\n';
+		return false;
+	}
+
+	std::cout << "Text engine initialized!" << '\n';
     return true;
 }
 

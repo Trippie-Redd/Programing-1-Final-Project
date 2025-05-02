@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Shotgun.h"
+#include <bitset>
 
 enum Direction {
     UP,
@@ -18,6 +19,7 @@ public:
     void Update(const std::vector<Primitives2D::Rect>& environment,
         std::vector<GameObjects::AmmoCrate>& ammoCrates,
         std::vector<GameObjects::Key>& keys,
+		const std::vector<GameObjects::TransitionBox>& transitionBoxes,
         const Vec2& mousePos,
         double deltaTime);
     void Render() const;
@@ -28,7 +30,7 @@ public:
     float GetHitboxRadius() const { return m_hitboxRadius; }
     float GetNoise()        const { return m_noise; }
 
-    void SetUnlockedObjects(bool* pUnlockedGameObjects) { m_pUnlockedGameObjects = pUnlockedGameObjects; }
+    void SetUnlockedObjects(std::bitset<65536*GameObjects::GAME_OBJECTS_ENUM_LENGTH>* pUnlockedGameObjects) { m_pUnlockedGameObjects = pUnlockedGameObjects; }
 
     void Move(enum Direction dir, double deltaTime);
     void Shoot(const std::vector<Primitives2D::Rect>& environment, const Vec2& mousePos);
@@ -52,13 +54,14 @@ private:
     Vec2 m_velocity = Vec2::Zero();
 
     // GameObjects to remove in m_unlockedGameObjects in Game class
-    bool* m_pUnlockedGameObjects = nullptr;
+	std::bitset<65536*GameObjects::GAME_OBJECTS_ENUM_LENGTH>* m_pUnlockedGameObjects = nullptr;
 
 private:
     void HandleWallCollisions(const std::vector<Primitives2D::Rect>& environment);
     void CheckForAmmoPickups(std::vector<GameObjects::AmmoCrate>& ammoCrates);
     void CheckForKeyPickups(std::vector<GameObjects::Key>& keys);
+	void CheckForTransitionCollisions(const std::vector<GameObjects::TransitionBox>& transitionBoxes);
 
-    void UnlockGameObject(int type, uint16_t ID);
+    void UnlockGameObject(GameObjects::GameObjectsEnum type, uint16_t ID);
 
 };

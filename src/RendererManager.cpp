@@ -1,26 +1,26 @@
 #include "RendererManager.h"
 
-#include <stdexcept>
+#include <iostream>
 #include <string>
 
 // Define the static instance
-RendererManager* RendererManager::instance = nullptr;
+RendererManager* RendererManager::s_instance = nullptr;
 
 RendererManager& RendererManager::GetInstance()
 {
-    if (instance == nullptr)
+    if (s_instance == nullptr)
     {
-        instance = new RendererManager();
+        s_instance = new RendererManager();
     }
-    return *instance;
+    return *s_instance;
 }
 
 void RendererManager::Destroy()
 {
-    if (instance != nullptr)
+    if (s_instance != nullptr)
     {
-        delete instance;
-        instance = nullptr;
+        delete s_instance;
+        s_instance = nullptr;
     }
 }
 
@@ -35,10 +35,12 @@ void RendererManager::Init(SDL_Window* window)
 
     if (m_renderer == nullptr)
     {
-        throw std::runtime_error("Failed to create renderer: " + std::string(SDL_GetError()));
+        std::cerr << "SDL_CreateRenderer failed! Error: " << SDL_GetError() << '\n';
+        return;
     }
 
     SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+    std::cout << "Renderer succesfully created!" << '\n';
 }
 
 SDL_Renderer* RendererManager::GetRenderer()

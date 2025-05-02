@@ -38,27 +38,18 @@ Game::Game()
 	std::cout << "Window succesfully created!" << '\n';
 
 	RendererManager::GetInstance().Init(m_window);
-	std::cout << "Renderer succesfully created!" << '\n';
 
-	if (!Text::InitTextEngine())
-	{
-		std::cerr << "TTF_Init failed! Error: " << SDL_GetError() << '\n';
-		return;
-	}
-	std::cout << "TTF text engine succesfully initalized!" << '\n';
+	Text::InitTextEngine();
 
 	SDL_HideCursor();
 
-	std::fill(&m_unlockedGameObjects[0][0],
-		&m_unlockedGameObjects[0][0] + 4 * (UINT16_MAX + 1),
-		false);
+	m_unlockedGameObjects.reset();
+	m_player.SetUnlockedObjects(&m_unlockedGameObjects);
 
 	LoadLevel(1);
 
 	// For initalizing delta time calculations
 	m_lastTime = SDL_GetTicks();
-
-	m_player.SetUnlockedObjects(&m_unlockedGameObjects[0][0]);
 
 	m_isRunning = true;
 }
@@ -83,7 +74,7 @@ void Game::Update()
 
 	HandleEvents();
 
-	m_player.Update(m_environment, m_ammoCrates, m_keys, m_mousePos, m_deltaTime);
+	m_player.Update(m_environment, m_ammoCrates, m_keys, m_transitions, m_mousePos, m_deltaTime);
 
 	for (Enemy& enemy : m_enemies)
 	{
@@ -113,7 +104,7 @@ void Game::Render()
 
 	for (const GameObjects::TransitionBox& transitionBox : m_transitions)
 	{
-		if (!m_unlockedGameObjects[static_cast<int>(GameObjectsEnum::Keys)][transitionBox.keyID])
+		if (!m_unlockedGameObjects.test(static_cast<int>(GameObjects::GameObjectsEnum::Keys) * 65536 + transitionBox.keyID))
 			transitionBox.Render(199, 8, 27, 255);
 	}
 
@@ -133,6 +124,9 @@ void Game::Render()
 	}
 
 	m_player.Render();
+	
+	Text exampleText("Pickup key", 22, 35.0f, { 255, 255, 255, 255 }, Vec2(100, 200));
+	exampleText.RenderTexture();
 
 	SDL_RenderPresent(renderer);
 }
@@ -215,23 +209,25 @@ void Game::HandleEvents()
 	}
 }
 
-void Game::UnloadLevel()
+void Game::LoadLevel(uint16_t nexLevelID)
 {
+	using namespace rapidjson;
+
 	m_environment.clear();
 	m_ammoCrates.clear();
 	m_transitions.clear();
 	m_keys.clear();
 	m_doors.clear();
 	m_enemies.clear();
+	
+	// level_0 reserved for exiting the game
+	if (nexLevelID == 0)
+	{
+		m_isRunning = false;
+		return;
+	}
 
-	std::cout << "Level unloaded" << '\n';
-}
-
-void Game::LoadLevel(uint16_t nexLevelID)
-{
-	using namespace rapidjson;
-
-	// Try multiple possible paths
+	// Don't try multiple possible paths fn
 	std::string filename = "./levels/level_" + std::to_string(nexLevelID) + ".json";
 	FILE* levelJSON = fopen(filename.c_str(), "rb");
 	if (!levelJSON)
@@ -268,20 +264,13 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		m_environment.push_back(Primitives2D::Rect(Vec2(x, y), width, height));
 	}
 
-	// Create wall boundaries
-	// dumb
-	m_environment.push_back(Rect(Vec2(0, 0), Settings::WINDOW_WIDTH, Settings::BORDER_WALL_THICKNESS));                                                                                                                             // Top wall
-	m_environment.push_back(Rect(Vec2(0, Settings::WINDOW_HEIGHT - Settings::BORDER_WALL_THICKNESS), Settings::WINDOW_WIDTH, Settings::BORDER_WALL_THICKNESS));                                                                     // Bottom wall
-	m_environment.push_back(Rect(Vec2(0, Settings::BORDER_WALL_THICKNESS), Settings::BORDER_WALL_THICKNESS, Settings::WINDOW_HEIGHT - (Settings::BORDER_WALL_THICKNESS * 2)));                                                      // Left wall
-	m_environment.push_back(Rect(Vec2(Settings::WINDOW_WIDTH - Settings::BORDER_WALL_THICKNESS, Settings::BORDER_WALL_THICKNESS), Settings::BORDER_WALL_THICKNESS, Settings::WINDOW_HEIGHT - (Settings::BORDER_WALL_THICKNESS * 2))); // Right wall
-
 	// Access enemies
 	const Value& enemies = document["enemies"];
 	for (SizeType i = 0; i < enemies.Size(); i++)
 	{
 		const Value& enemy = enemies[i];
 		uint16_t ID = enemy["ID"].GetUint();
-		if (m_unlockedGameObjects[static_cast<int>(GameObjectsEnum::Enemies)][ID]) continue;
+		if (m_unlockedGameObjects.test(65536 * static_cast<int>(GameObjects::GameObjectsEnum::Enemies) + ID)) continue;
 
 		std::string type = enemy["type"].GetString();
 		int locationX = enemy["locationX"].GetInt();
@@ -303,7 +292,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 	{
 		const Value& ammoCrate = ammoCrates[i];
 		uint16_t ID = ammoCrate["ID"].GetUint();
-		if (m_unlockedGameObjects[static_cast<int>(GameObjectsEnum::AmmoCrates)][ID]) continue;
+		if (m_unlockedGameObjects.test(65536 * static_cast<int>(GameObjects::GameObjectsEnum::AmmoCrates) + ID)) continue;
 
 		int x = ammoCrate["x"].GetInt();
 		int y = ammoCrate["y"].GetInt();
@@ -318,7 +307,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 	{
 		const Value& key = keys[i];
 		uint16_t ID = key["ID"].GetUint();
-		if (m_unlockedGameObjects[static_cast<int>(GameObjectsEnum::Keys)][ID]) continue;
+		if (m_unlockedGameObjects.test(65536 * static_cast<int>(GameObjects::GameObjectsEnum::Keys) + ID)) continue;
 
 		int x = key["x"].GetInt();
 		int y = key["y"].GetInt();
@@ -332,7 +321,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 	{
 		const Value& door = doors[i];
 		uint16_t ID = door["ID"].GetUint();
-		if (m_unlockedGameObjects[static_cast<int>(GameObjectsEnum::Doors)][ID]) continue;
+		if (m_unlockedGameObjects.test(65536 * static_cast<int>(GameObjects::GameObjectsEnum::Doors) + ID)) continue;
 
 		int x = door["x"].GetInt();
 		int y = door["y"].GetInt();
@@ -357,9 +346,11 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		int height = transitionBox["height"].GetInt();
 
 		uint16_t nextLevelID = transitionBox["nextLevelID"].GetUint();
+		int nextPosX = transitionBox["nextPosX"].GetInt();
+		int nextPosY = transitionBox["nextPosY"].GetInt();
 		uint16_t keyID = transitionBox["keyID"].GetUint();
 
-		m_transitions.push_back(GameObjects::TransitionBox(Vec2(x, y), width, height, nextLevelID, keyID));
+		m_transitions.push_back(GameObjects::TransitionBox(Vec2(x, y), width, height, nextLevelID, Vec2(nextPosX, nextPosY), keyID));
 	}
 
 	std::cout << filename << " loaded" << '\n';

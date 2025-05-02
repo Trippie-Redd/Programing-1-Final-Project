@@ -1,0 +1,16 @@
+/*
+
+Walls:
+    - Nothing
+Enemies:
+    - Nothing
+AmmoCrates:
+    - Nothing
+Keys:
+    - KeyID 0 is reserved for the first key
+Doors:
+    - Nothing
+TransitionBoxes:
+    - Use KeyID 0 for doors that don't require a special key
+    - Use NextLevelID 0 to exit the game
+*/
