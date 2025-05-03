@@ -12,7 +12,7 @@ Raycast::~Raycast() = default;
 
 // ----------------- Update/Render ------------------- //
 
-void Raycast::Render(bool drawHits, int r, int g, int b, int a) const
+void Raycast::Render(bool drawHits, uint8_t r, uint8_t g, uint8_t b, uint8_t a) const
 {
     // Render each ray as a line from origin to intersection point
     for (const LineSegment& ray : m_rays)

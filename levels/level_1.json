@@ -89,5 +89,17 @@
             "nextPosY": 0,
             "keyID": 0
         }
+    ],
+    "texts": [
+        {
+            "content": "Pickup key",
+            "ptsize": 25,
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255,
+            "x": 145,
+            "y": 150
+        }
     ]
 }

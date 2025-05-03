@@ -11,14 +11,18 @@ Shotgun::~Shotgun() = default;
 void Shotgun::Update(float deltaTime)
 {
     // Decreases constanly alpha, removes from vector if alpha is < 0
-    for (auto blast = m_blasts.begin(); blast != m_blasts.end();)
+    for (int i = 0; i < m_blasts.size(); i++)
     {
-        blast->alpha -= 95.0f * deltaTime;
+        m_blasts[i].alpha -= 95.0f * deltaTime;
 
-        if (blast->alpha <= 0)
-            blast = m_blasts.erase(blast);
-        else
-            ++blast;
+        // bout to do sum crazy here
+        // hol up
+        // still havent done anything crazy
+        if (m_blasts[i].alpha <= 0)
+        {
+            m_blasts.erase(m_blasts.begin() + i);
+            i--;
+        }
     }
 }
 
@@ -28,7 +32,7 @@ void Shotgun::Render() const
     for (const ShotgunBlast& blast : m_blasts)
     {
         if (blast.alpha > 0)
-            blast.rays.Render(false, 255, 0, 0, (int)blast.alpha);
+            blast.rays.Render(false, 255, 0, 0, (uint8_t)blast.alpha);
     }
 }
 

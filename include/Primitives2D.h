@@ -60,7 +60,7 @@ namespace Primitives2D
             , max(position + Vec2(width, height))
         {}
 
-        void Render(uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool fillRect = true) const;
+        virtual void Render(uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool fillRect = true) const;
 
         Vec2 GetTopLeft()     const { return min; }
         Vec2 GetBottomRight() const { return max; }

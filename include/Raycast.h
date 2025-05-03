@@ -9,7 +9,7 @@ public:
     Raycast();
     ~Raycast();
 
-    void Render(bool drawHits = false, int r = 0, int g = 0, int b = 0, int a = 255) const;
+    void Render(bool drawHits = false, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 255) const;
     void RenderGeometry();
 
     std::vector<Primitives2D::LineSegment> getRays() const { return m_rays; }

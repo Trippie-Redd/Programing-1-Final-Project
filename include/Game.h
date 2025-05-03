@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "SDL3/SDL.h"
+#include "Text.h"
 
 class Game
 {
@@ -33,9 +34,11 @@ private:
 	std::vector<GameObjects::Key>            m_keys;
 	std::vector<GameObjects::Door>           m_doors;
 	std::vector<Enemy>                       m_enemies;
+	std::vector<Text>                        m_text;
 
 	std::bitset<65536*GameObjects::GAME_OBJECTS_ENUM_LENGTH> m_unlockedGameObjects; // uint16_t max value is 65535
 
+	// Delta time vars
 	uint32_t m_currentTime = 0;
 	uint32_t m_lastTime = 0;
 	float m_deltaTime = 0.0f;

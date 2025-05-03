@@ -156,7 +156,7 @@ void Player::CheckForTransitionCollisions(const std::vector<GameObjects::Transit
             // Make sure player is in the right position
             m_position = box.nextPos;
 
-            // Load new level
+            // TODO : Load new level
 
         }
         else

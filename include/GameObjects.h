@@ -1,17 +1,34 @@
 #pragma once
 
 #include "Primitives2D.h"
+#include "SDL3/SDL.h"
+
+
 
 namespace GameObjects
 {
     static constexpr int GAME_OBJECTS_ENUM_LENGTH = 4;
     enum class GameObjectsEnum
     {
-		AmmoCrates,
-		Keys,
-		Doors,
-		Enemies
+        AmmoCrates,
+        Keys,
+        Doors,
+        Enemies
     };
+
+    struct CompleteTexture
+    {
+        SDL_Texture* texture;
+        Vec2 dimensions;
+    };
+
+    void LoadTextures();
+    void LoadSingleTexture(const char* filepath, GameObjectsEnum type);
+    void DestroyTextures();
+    void RenderTexture(const Primitives2D::Rect& object, GameObjectsEnum type);
+
+    // Holds all textures used for game objects
+    static CompleteTexture s_textures[GAME_OBJECTS_ENUM_LENGTH];
     
     struct AmmoCrate : Primitives2D::Rect
     {

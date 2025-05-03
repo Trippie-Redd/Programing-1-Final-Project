@@ -1,14 +1,13 @@
 #include "Game.h"
 
 #include "Settings.h"
-#include "Text.h"
 #include "RendererManager.h"
 #include <string>
 
 #include "rapidjson/document.h" 
 #include "rapidjson/filereadstream.h" 
-#include "rapidjson/filewritestream.h" 
-#include "rapidjson/writer.h" 
+//#include "rapidjson/filewritestream.h" 
+//#include "rapidjson/writer.h" 
 
 using namespace Primitives2D;
 
@@ -39,7 +38,9 @@ Game::Game()
 
 	RendererManager::GetInstance().Init(m_window);
 
+	// Consider doing alot of this stuff before creating a window
 	Text::InitTextEngine();
+	GameObjects::LoadTextures();
 
 	SDL_HideCursor();
 
@@ -56,6 +57,7 @@ Game::Game()
 
 Game::~Game()
 {
+	GameObjects::DestroyTextures();
 	RendererManager::Destroy();
 	SDL_DestroyWindow(m_window);
 	SDL_Quit();
@@ -75,6 +77,9 @@ void Game::Update()
 	HandleEvents();
 
 	m_player.Update(m_environment, m_ammoCrates, m_keys, m_transitions, m_mousePos, m_deltaTime);
+
+	// No need to render or update enemies if player has already quit the game
+	if (!m_isRunning) return;
 
 	for (Enemy& enemy : m_enemies)
 	{
@@ -97,9 +102,9 @@ void Game::Render()
 		wall.Render(255, 255, 255, 255);
 	}
 
-	for (const GameObjects::AmmoCrate ammoCrate : m_ammoCrates)
+	for (const GameObjects::AmmoCrate& ammoCrate : m_ammoCrates)
 	{
-		ammoCrate.Render(2, 171, 165, 255);
+		RenderTexture(ammoCrate, GameObjects::GameObjectsEnum::AmmoCrates);
 	}
 
 	for (const GameObjects::TransitionBox& transitionBox : m_transitions)
@@ -110,7 +115,7 @@ void Game::Render()
 
 	for (const GameObjects::Key& key : m_keys)
 	{
-		key.Render(214, 189, 0, 255);
+		RenderTexture(key, GameObjects::GameObjectsEnum::Keys);
 	}
 
 	for (const GameObjects::Door& door : m_doors)
@@ -118,15 +123,18 @@ void Game::Render()
 		door.Render(181, 98, 20, 255);
 	}
 
+	// TODO : CHANGE THIS TO CONST / don't sort sight raycast in render func
 	for (Enemy& enemy : m_enemies)
 	{
 		enemy.Render();
 	}
 
+	for (const Text& text : m_text)
+	{
+		text.RenderTexture();
+	}
+
 	m_player.Render();
-	
-	Text exampleText("Pickup key", 22, 35.0f, { 255, 255, 255, 255 }, Vec2(100, 200));
-	exampleText.RenderTexture();
 
 	SDL_RenderPresent(renderer);
 }
@@ -219,6 +227,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 	m_keys.clear();
 	m_doors.clear();
 	m_enemies.clear();
+	m_text.clear();
 	
 	// level_0 reserved for exiting the game
 	if (nexLevelID == 0)
@@ -261,7 +270,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		int width = wall["width"].GetInt();
 		int height = wall["height"].GetInt();
 
-		m_environment.push_back(Primitives2D::Rect(Vec2(x, y), width, height));
+		m_environment.emplace_back(Vec2(x, y), width, height);
 	}
 
 	// Access enemies
@@ -283,7 +292,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		const Vec2 position(locationX, locationY);
 		const LineSegment path(Vec2(pathStartX, pathStartY), Vec2(pathEndX, pathEndY));
 
-		m_enemies.push_back(Enemy(Enemy::enemyMap.at(type), position, path, ID));
+		m_enemies.emplace_back(Enemy::enemyMap.at(type), position, path, ID);
 	}
 
 	// Access ammoCrates
@@ -298,7 +307,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		int y = ammoCrate["y"].GetInt();
 		uint8_t ammoCount = ammoCrate["ammoCount"].GetUint();
 
-		m_ammoCrates.push_back(GameObjects::AmmoCrate(Vec2(x, y), ammoCount, ID));
+		m_ammoCrates.emplace_back(Vec2(x, y), ammoCount, ID);
 	}
 
 	// Access keys
@@ -312,7 +321,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		int x = key["x"].GetInt();
 		int y = key["y"].GetInt();
 
-		m_keys.push_back(GameObjects::Key(Vec2(x, y), ID));
+		m_keys.emplace_back(Vec2(x, y), ID);
 	}
 
 	// Access doors
@@ -331,7 +340,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		int hingePosX = door["hingePosX"].GetInt();
 		int hingePosY = door["hingePosY"].GetInt();
 
-		m_doors.push_back(GameObjects::Door(Vec2(x, y), width, height, Vec2(hingePosX, hingePosY), ID));
+		m_doors.emplace_back(Vec2(x, y), width, height, Vec2(hingePosX, hingePosY), ID);
 	}
 
 	// Access transition boxes
@@ -350,7 +359,28 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		int nextPosY = transitionBox["nextPosY"].GetInt();
 		uint16_t keyID = transitionBox["keyID"].GetUint();
 
-		m_transitions.push_back(GameObjects::TransitionBox(Vec2(x, y), width, height, nextLevelID, Vec2(nextPosX, nextPosY), keyID));
+		m_transitions.emplace_back(Vec2(x, y), width, height, nextLevelID, Vec2(nextPosX, nextPosY), keyID);
+	}
+
+	const Value& texts = document["texts"];
+	for (SizeType i = 0; i < texts.Size(); i++)
+	{
+		const Value& text = texts[i];
+
+		const char* content = text["content"].GetString();
+		size_t length = text["content"].GetStringLength();
+		float ptsize = text["ptsize"].GetFloat();
+		uint8_t r = text["r"].GetUint();
+		uint8_t g = text["g"].GetUint();
+		uint8_t b = text["b"].GetUint();
+		uint8_t a = text["a"].GetUint();
+		int x = text["x"].GetInt();
+		int y = text["y"].GetInt();
+
+		std::cout << "succesfully created text" << '\n';
+
+		SDL_Color color = { r, g, b, a };
+		m_text.emplace_back(content, length, ptsize, color, Vec2(x, y));
 	}
 
 	std::cout << filename << " loaded" << '\n';
