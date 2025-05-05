@@ -57,8 +57,7 @@ namespace GameObjects
     {
         uint16_t nextLevelID;
         uint16_t keyID;
-        Vec2 nextPos;
 
-        TransitionBox(const Vec2& position, float width, float height, uint16_t nextLevelID, const Vec2& nextPos, uint16_t keyID = 0);
+        TransitionBox(const Vec2& position, float width, float height, uint16_t nextLevelID, uint16_t keyID = 0);
     };
 }

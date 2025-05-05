@@ -67,19 +67,19 @@ file(GLOB_RECURSE HEADERS "include/*.h")
 
 # Add the executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} 
-    "include/Vec2.h" "src/Vec2.cpp"
+    "include/Vec2.h"            "src/Vec2.cpp"
     "include/RendererManager.h" "src/RendererManager.cpp"
-    "include/Primitives2D.h" "src/Primitives2D.cpp"
-    "include/Text.h" "src/Text.cpp"
-    "include/GameObjects.h" "src/GameObjects.cpp"
-    "include/Cursor.h" "src/Cursor.cpp"
-    "include/Raycast.h" "src/Raycast.cpp"
-    "include/Shotgun.h" "src/Shotgun.cpp"
-    "include/Player.h" "src/Player.cpp"
-    "include/Enemy.h" "src/Enemy.cpp"
-    "include/Game.h" "src/Game.cpp"
+    "include/Primitives2D.h"    "src/Primitives2D.cpp"
+    "include/Text.h"            "src/Text.cpp"
+    "include/GameObjects.h"     "src/GameObjects.cpp"
+     
+    "include/Raycast.h"         "src/Raycast.cpp"
+    "include/Shotgun.h"         "src/Shotgun.cpp"
+    "include/Player.h"          "src/Player.cpp"
+    "include/Enemy.h"           "src/Enemy.cpp"
+    "include/Game.h"            "src/Game.cpp"
     "include/Settings.h"
-)
+ )
 
 # Link libraries
 target_link_libraries(${PROJECT_NAME}

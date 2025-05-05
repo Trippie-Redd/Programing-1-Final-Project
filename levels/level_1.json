@@ -75,8 +75,6 @@
             "width": 150,
             "height": 25,
             "nextLevelID": 2,
-            "nextPosX": 885,
-            "nextPosY": 100,
             "keyID": 0
         },
         {
@@ -85,8 +83,6 @@
             "width": 150,
             "height": 25,
             "nextLevelID": 0,
-            "nextPosX": 0,
-            "nextPosY": 0,
             "keyID": 0
         }
     ],

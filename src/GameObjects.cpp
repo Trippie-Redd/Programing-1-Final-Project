@@ -91,10 +91,9 @@ namespace GameObjects
         , ID(ID)
     {}
 
-    TransitionBox::TransitionBox(const Vec2& position, float width, float height, uint16_t nextLevelID, const Vec2& nextPos, uint16_t keyID)
+    TransitionBox::TransitionBox(const Vec2& position, float width, float height, uint16_t nextLevelID, uint16_t keyID)
         : Rect(position, width, height)
         , nextLevelID(nextLevelID)
-		, nextPos(nextPos)
         , keyID(keyID)
     {}
 }

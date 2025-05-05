@@ -1,138 +1,123 @@
 {
     "walls": [
         {
-            "x": 200,
-            "y": 800,
-            "width": 400,
-            "height": 40
-        },
-        {
-            "x": 700,
-            "y": 800,
-            "width": 500,
-            "height": 40
-        },
-        {
-            "x": 1300,
-            "y": 800,
-            "width": 400,
-            "height": 40
-        },
-        {
-            "x": 300,
-            "y": 600,
-            "width": 300,
-            "height": 40
-        },
-        {
-            "x": 800,
-            "y": 600,
-            "width": 200,
-            "height": 40
-        },
-        {
-            "x": 1200,
-            "y": 600,
-            "width": 300,
-            "height": 40
-        },
-        {
-            "x": 500,
-            "y": 400,
-            "width": 400,
-            "height": 40
-        },
-        {
-            "x": 1100,
-            "y": 400,
-            "width": 400,
-            "height": 40
+            "x": 0,
+            "y": 0,
+            "width": 25,
+            "height": 465
         },
         {
             "x": 0,
-            "y": 950,
-            "width": 1920,
-            "height": 40
+            "y": 615,
+            "width": 25,
+            "height": 465
         },
         {
-            "x": 0,
+            "x": 1895,
             "y": 0,
-            "width": 40,
-            "height": 1080
+            "width": 25,
+            "height": 465
         },
         {
-            "x": 1880,
+            "x": 1895,
+            "y": 615,
+            "width": 25,
+            "height": 465
+        },
+        {
+            "x": 25,
+            "y": 1055,
+            "width": 860,
+            "height": 25
+        },
+        {
+            "x": 1035,
+            "y": 1055,
+            "width": 860,
+            "height": 25
+        },
+        {
+            "x": 25,
             "y": 0,
-            "width": 40,
-            "height": 1080
+            "width": 1870,
+            "height": 25
+        },
+        {
+            "x": 380,
+            "y": 773,
+            "width": 150,
+            "height": 150
+        },
+        {
+            "x": 1390,
+            "y": 773,
+            "width": 150,
+            "height": 150
+        },
+        {
+            "x": 885,
+            "y": 281,
+            "width": 150,
+            "height": 150
         }
     ],
     "enemies": [
     ],
     "ammoCrates": [
         {
-            "x": 250,
-            "y": 750,
-            "ammoCount": 5,
-            "ID": 0
-        },
-        {
-            "x": 850,
-            "y": 750,
-            "ammoCount": 8,
-            "ID": 1
-        },
-        {
-            "x": 1450,
-            "y": 750,
-            "ammoCount": 3,
-            "ID": 2
-        },
-        {
-            "x": 350,
-            "y": 550,
-            "ammoCount": 6,
+            "x": 136,
+            "y": 741,
+            "ammoCount": 2,
             "ID": 3
         },
         {
-            "x": 900,
-            "y": 550,
-            "ammoCount": 4,
+            "x": 156,
+            "y": 891,
+            "ammoCount": 1,
             "ID": 4
         },
         {
-            "x": 1300,
-            "y": 550,
-            "ammoCount": 10,
+            "x": 1729,
+            "y": 773,
+            "ammoCount": 2,
             "ID": 5
-        },
-        {
-            "x": 600,
-            "y": 350,
-            "ammoCount": 7,
-            "ID": 6
-        },
-        {
-            "x": 1200,
-            "y": 350,
-            "ammoCount": 15,
-            "ID": 7
         }
     ],
     "keys": [
         {
-            "x": 200,
-            "y": 200,
-            "ID": 0
-        },
-        {
-            "x": 700,
-            "y": 250,
+            "x": 944,
+            "y": 159,
             "ID": 1
         }
     ],
     "doors": [
     ],
     "transitionBoxes": [
+        {
+            "x": 885,
+            "y": 1055,
+            "width": 150,
+            "height": 25,
+            "nextLevelID": 1,
+            "keyID": 0
+        },
+        {
+            "x": 0,
+            "y": 465,
+            "width": 25,
+            "height": 150,
+            "nextLevelID": 3,
+            "keyID": 1
+        },
+        {
+            "x": 1895,
+            "y": 465,
+            "width": 25,
+            "height": 150,
+            "nextLevelID": 6,
+            "keyID": 1
+        }
+    ],
+    "texts": [
     ]
 }

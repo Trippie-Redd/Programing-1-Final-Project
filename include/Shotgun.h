@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Cursor.h"
 #include "Raycast.h"
 
 struct ShotgunBlast

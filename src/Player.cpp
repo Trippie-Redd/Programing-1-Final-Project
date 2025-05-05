@@ -1,14 +1,15 @@
 #include "Player.h"
 
 #include <algorithm>
+#include "Game.h"
+#include "Settings.h"
 
 using namespace Primitives2D;
 
 // ------------- Constructors/Destructor ------------- //
 
 Player::Player()
-    : m_cursor(Cursor(Vec2::Zero()))
-    , m_position(Vec2(600, 400))
+    : m_position(Vec2(600, 400))
 {}
 
 Player::~Player() = default;
@@ -34,8 +35,8 @@ void Player::Update(const std::vector<Rect>& environment,
     CheckForKeyPickups(keys);
 
     m_body = CreateUniformShape(m_position, 10.0f, 8);
-    m_cursor.Update(mousePos, m_position);
     m_shotgun.Update(deltaTime);
+    UpdateCursor(mousePos);
 }
 
 void Player::Render() const
@@ -51,8 +52,35 @@ void Player::Render() const
         line.Render(0, 255, 0, 255);
 
     m_shotgun.Render();
+    RenderCursor();
+}
 
-    m_cursor.Render();
+void Player::UpdateCursor(const Vec2& mousePos)
+{
+    m_mousePos = mousePos;
+
+    float length = LineSegment(m_mousePos, m_position).Length();
+    float minLength = 30;
+    float maxLength = 850;
+
+    // Caps length
+    if (length > maxLength)
+        length = maxLength;
+    else if (length < minLength)
+        length = minLength;
+
+    // Calculates cursor radius
+    float lerpLength = (length - minLength) / (maxLength - minLength);
+    m_cursorCurrentRadius = Lerp(m_cursorMinRadius, m_cursorMaxRadius, lerpLength);
+}
+
+void Player::RenderCursor() const
+{
+    const std::vector<Primitives2D::LineSegment> centerShape = CreateUniformShape(m_mousePos, m_cursorCurrentRadius, 8);
+
+    // Render center shape
+    for (const LineSegment& segment : centerShape)
+        segment.Render(255, 0, 0, 255);
 }
 
 // ---------------- Class functions ------------------ //
@@ -83,7 +111,7 @@ void Player::Move(enum Direction dir, double deltaTime)
 
 void Player::Shoot(const std::vector<Rect>& environment, const Vec2& mousePos)
 {
-    m_noise = m_shotgun.Shoot(environment, m_position, mousePos, m_cursor.GetRadius(), m_noise);
+    m_noise = m_shotgun.Shoot(environment, m_position, mousePos, m_cursorCurrentRadius, m_noise);
     //std::cout << m_noise << '\n';
 }
 
@@ -151,13 +179,29 @@ void Player::CheckForTransitionCollisions(const std::vector<GameObjects::Transit
         if (!CheckRectCircleCollision(box, { m_position, m_hitboxRadius })) continue;
 
         // Check if the player should transition
-        if (m_pUnlockedGameObjects->test(static_cast<int>(GameObjects::GameObjectsEnum::Keys) * 65536 + box.keyID))
+        if (m_pGame->GetUnlockedObjects().test(static_cast<int>(GameObjects::GameObjectsEnum::Keys) * 65536 + box.keyID))
         {
-            // Make sure player is in the right position
-            m_position = box.nextPos;
+            // Puts player in the right position
+            // True if transition box is on the bottom or top of the screen
+            if ((box.GetTopLeft() - box.GetTopRight()).Length() < (box.GetTopLeft() - box.GetBottomLeft()).Length())
+            {
+                // True if transition box is on the right
+                if (m_position.x > Settings::WINDOW_WIDTH / 2)
+                    m_position.x = 50;
+                else
+                    m_position.x = Settings::WINDOW_WIDTH - 50;
+            }
+            else
+            {
+                // True if transition box is on the bottom
+                if (m_position.y > Settings::WINDOW_HEIGHT / 2)
+                    m_position.y = 50;
+                else
+                    m_position.y = Settings::WINDOW_HEIGHT - 50;
+            }
 
-            // TODO : Load new level
-
+            // Just loads a new level
+            m_pGame->LoadLevel(box.nextLevelID);
         }
         else
         {
@@ -242,11 +286,5 @@ void Player::CheckForKeyPickups(std::vector<GameObjects::Key>& keys)
 
 void Player::UnlockGameObject(GameObjects::GameObjectsEnum type, uint16_t ID)
 {
-    if (m_pUnlockedGameObjects == nullptr)
-    {
-        std::cout << "m_pUnlockedGameObjects has not been set" << '\n';
-        return;
-    }
-
-    m_pUnlockedGameObjects->set(static_cast<int>(type) * 65536 + ID);
+    m_pGame->GetUnlockedObjects().set(static_cast<int>(type) * 65536 + ID);
 }

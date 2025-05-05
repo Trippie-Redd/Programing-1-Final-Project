@@ -1,0 +1,64 @@
+{
+    "walls": [
+        {
+            "x": 0,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 1895,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 25,
+            "y": 1055,
+            "width": 1870,
+            "height": 25
+        },
+        {
+            "x": 25,
+            "y": 0,
+            "width": 810,
+            "height": 25
+        },
+        {
+            "x": 1085,
+            "y": 0,
+            "width": 810,
+            "height": 25
+        }
+    ],
+    "enemies": [
+    ],
+    "ammoCrates": [
+    ],
+    "keys": [
+    ],
+    "doors": [
+    ],
+    "transitionBoxes": [
+        {
+            "x": 835,
+            "y": 0,
+            "width": 250,
+            "height": 25,
+            "nextLevelID": 1,
+            "keyID": 0
+        }
+    ],
+    "texts": [
+        {
+            "content": "This level could not be found!",
+            "ptsize": 80,
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255,
+            "x": 274,
+            "y": 513
+        }
+    ]
+}

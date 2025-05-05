@@ -18,7 +18,6 @@ public:
 
 private:
     static TTF_Font* s_font;
-    static SDL_Renderer* s_renderer;
 
     SDL_Texture* m_texture = nullptr;
     Vec2 m_position;

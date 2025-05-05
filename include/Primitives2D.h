@@ -64,7 +64,7 @@ namespace Primitives2D
 
         Vec2 GetTopLeft()     const { return min; }
         Vec2 GetBottomRight() const { return max; }
-        Vec2 GetTopRight()    const { return Vec2(min.x, max.y); }
+        Vec2 GetTopRight()    const { return Vec2(max.x, min.y); }
         Vec2 GetBottomLeft()  const { return Vec2(min.x, max.y); }
         float GetWidth()      const { return max.x - min.x; }
         float GetHeight()     const { return max.y - min.y; }

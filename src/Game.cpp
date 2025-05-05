@@ -45,7 +45,7 @@ Game::Game()
 	SDL_HideCursor();
 
 	m_unlockedGameObjects.reset();
-	m_player.SetUnlockedObjects(&m_unlockedGameObjects);
+	m_player.SetGamePointer(this);
 
 	LoadLevel(1);
 
@@ -137,6 +137,11 @@ void Game::Render()
 	m_player.Render();
 
 	SDL_RenderPresent(renderer);
+}
+
+bool Game::Running() const
+{
+	return m_isRunning;
 }
 
 // ---------------- Class functions ------------------ //
@@ -242,6 +247,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 	if (!levelJSON)
 	{
 		std::cerr << "Could not open level file: " << filename << '\n';
+		LoadLevel(404);
 		return;
 	}
 
@@ -257,6 +263,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 	if (!document.IsObject())
 	{
 		std::cout << "Invalid JSON format in " << filename << '\n';
+		LoadLevel(404);
 		return;
 	}
 
@@ -355,11 +362,9 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		int height = transitionBox["height"].GetInt();
 
 		uint16_t nextLevelID = transitionBox["nextLevelID"].GetUint();
-		int nextPosX = transitionBox["nextPosX"].GetInt();
-		int nextPosY = transitionBox["nextPosY"].GetInt();
 		uint16_t keyID = transitionBox["keyID"].GetUint();
 
-		m_transitions.emplace_back(Vec2(x, y), width, height, nextLevelID, Vec2(nextPosX, nextPosY), keyID);
+		m_transitions.emplace_back(Vec2(x, y), width, height, nextLevelID, keyID);
 	}
 
 	const Value& texts = document["texts"];

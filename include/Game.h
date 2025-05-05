@@ -13,11 +13,12 @@ public:
 
 	void HandleEvents();
 	void Update();
-	void Render();
+	void Render() ;
 
 	void LoadLevel(uint16_t nexLevelID);
 
-	bool Running() const { return m_isRunning; }
+	bool Running() const;
+	std::bitset<65536 * GameObjects::GAME_OBJECTS_ENUM_LENGTH>& GetUnlockedObjects() { return m_unlockedGameObjects;  }
 
 private:
 	bool m_isRunning = false;
