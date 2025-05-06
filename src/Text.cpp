@@ -29,7 +29,7 @@ void Text::RenderTexture() const
 
     /*
     * 
-    * FIXME : Can only render one text instance at a time
+    * FIXME : Can only render one text instance at a time using a vector
     * 
     */
 
@@ -79,8 +79,6 @@ bool Text::CreateTextTexture(const char* text, size_t length, float ptsize, cons
         m_texture = nullptr;
     }
 
-    // Don't close the static font here, just use it
-    // Need to set font size before rendering
     TTF_SetFontSize(s_font, static_cast<int>(ptsize));
 
     SDL_Surface* textSurface = TTF_RenderText_Solid(s_font, text, length, color);

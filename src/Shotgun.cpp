@@ -2,9 +2,7 @@
 
 // ------------- Constructors/Destructor ------------- //
 
-Shotgun::Shotgun()
-    : m_ammoText("0/0", 3, 20.0f, { 255, 0, 0 }, Vec2(10, 10))
-{}
+Shotgun::Shotgun() = default;
 
 Shotgun::~Shotgun() = default;
 
@@ -83,5 +81,20 @@ float Shotgun::Shoot(const std::vector<Primitives2D::Rect>& environment, const V
 
 void Shotgun::Reload()
 {
-    m_currentMagAmmo = m_maxMagAmmo;
+    // First calc ammount of ammo to take from mag
+    uint8_t ammoToReload = m_maxMagAmmo - m_currentMagAmmo;
+    
+    // Do nothing if mag is full or can't reload
+    if (ammoToReload <= 0)         return;
+    if (m_currentReserveAmmo <= 0) return;
+
+    // If player has less than ammo needed to fully reload
+    if (m_currentReserveAmmo < ammoToReload)
+    {
+        ammoToReload = m_currentReserveAmmo;
+    }
+
+    // Change ammo counts
+    m_currentReserveAmmo -= ammoToReload;
+    m_currentMagAmmo += ammoToReload;
 }

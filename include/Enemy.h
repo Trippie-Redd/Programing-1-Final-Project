@@ -14,10 +14,8 @@ enum class EnemyStates
 
 enum class EnemyTypes
 {
-    Melee,
+    Fast,
     Brute,
-    Pistol,
-    Shotgun,
     Boss
 };
 

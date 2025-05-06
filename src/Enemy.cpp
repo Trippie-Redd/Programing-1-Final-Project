@@ -11,13 +11,9 @@ Enemy::Enemy(EnemyTypes type, const Vec2& position, const LineSegment& path, uin
 {
     switch (type)
     {
-    case EnemyTypes::Melee:
+    case EnemyTypes::Fast:
         break;
     case EnemyTypes::Brute:
-        break;
-    case EnemyTypes::Pistol:
-        break;
-    case EnemyTypes::Shotgun:
         break;
     case EnemyTypes::Boss:
         break;
@@ -179,9 +175,7 @@ void Enemy::ChasePlayer(float deltaTime, const Vec2& playerPos)
 }
 
 const std::unordered_map<std::string, EnemyTypes> Enemy::enemyMap = {
-    { "Normal",  EnemyTypes::Melee   },
+    { "Fast",    EnemyTypes::Fast    },
     { "Brute",   EnemyTypes::Brute   },
-    { "Pistol",  EnemyTypes::Pistol  },
-    { "Shotgun", EnemyTypes::Shotgun },
     { "Boss",    EnemyTypes::Boss    }
 };
