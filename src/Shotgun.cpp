@@ -2,7 +2,9 @@
 
 // ------------- Constructors/Destructor ------------- //
 
-Shotgun::Shotgun() = default;
+Shotgun::Shotgun()
+    : m_ammoText("0/0", 3, 20.0f, { 255, 0, 0 }, Vec2(10, 10))
+{}
 
 Shotgun::~Shotgun() = default;
 
@@ -18,12 +20,18 @@ void Shotgun::Update(float deltaTime)
         // bout to do sum crazy here
         // hol up
         // still havent done anything crazy
+        // one more day tho
         if (m_blasts[i].alpha <= 0)
         {
             m_blasts.erase(m_blasts.begin() + i);
             i--;
         }
     }
+
+    // Updates ammo count text
+    char ammoText[8];
+    sprintf(ammoText, "%d%c%d", m_currentMagAmmo, '/', m_currentReserveAmmo);
+    m_ammoText.CreateTextTexture(ammoText, strlen(ammoText), 20.0f, { 255, 0, 0 }, Vec2(5.0f, 5.0f));
 }
 
 void Shotgun::Render() const
@@ -34,6 +42,9 @@ void Shotgun::Render() const
         if (blast.alpha > 0)
             blast.rays.Render(false, 255, 0, 0, (uint8_t)blast.alpha);
     }
+
+    // Renders the ammo count
+    m_ammoText.RenderTexture();
 }
 
 // ---------------- Class functions ------------------ //

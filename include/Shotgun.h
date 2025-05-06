@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Raycast.h"
+#include "Text.h"
 
 struct ShotgunBlast
 {
@@ -34,12 +35,13 @@ public:
 
 private:
     std::vector<ShotgunBlast> m_blasts;
+    Text m_ammoText;
 
     float m_currentTransparency = 255;
 
     const int m_bulletAmount = 5;
     int m_maxMagAmmo = 8;
-    int m_maxReserveAmmo = 32;
+    int m_maxReserveAmmo = 80;
     int m_currentMagAmmo = m_maxMagAmmo;
     int m_currentReserveAmmo = m_maxMagAmmo;
 };

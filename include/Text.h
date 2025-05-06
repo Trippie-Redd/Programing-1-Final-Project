@@ -7,6 +7,7 @@
 class Text
 {
 public:
+    Text() = default;
     Text(const char* text, size_t length, float ptsize, const SDL_Color& color, const Vec2& position);
     ~Text();
 

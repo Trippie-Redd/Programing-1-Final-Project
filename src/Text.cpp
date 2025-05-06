@@ -83,7 +83,7 @@ bool Text::CreateTextTexture(const char* text, size_t length, float ptsize, cons
     // Need to set font size before rendering
     TTF_SetFontSize(s_font, static_cast<int>(ptsize));
 
-    SDL_Surface* textSurface = TTF_RenderText_Blended(s_font, text, length, color); // Fixed function name and removed unnecessary length parameter
+    SDL_Surface* textSurface = TTF_RenderText_Solid(s_font, text, length, color);
     if (!textSurface)
     {
         std::cerr << "TTF_RenderText_Blended failed! Error: " << SDL_GetError() << '\n';
