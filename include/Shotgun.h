@@ -28,7 +28,11 @@ public:
     int GetCurrentMagAmmo()     const { return m_currentMagAmmo; }
     int GetMaxMagAmmo()         const { return m_maxMagAmmo; }
 
+    void SetCurrentReserveAmmo(uint8_t value) { m_currentReserveAmmo = value; }
+    void SetCurrentMagAmmo(uint8_t value)     { m_currentMagAmmo = value; }
+
     void AddReserveAmmo(int amount) { m_currentReserveAmmo = m_currentReserveAmmo + amount > m_maxReserveAmmo ? m_maxReserveAmmo : m_currentReserveAmmo + amount; }
+    void ClearTraces() { m_blasts.clear(); }
 
     float Shoot(const std::vector<Primitives2D::Rect>& environment, const Vec2& playerPos, const Vec2& position, float radius, float currentNoise = 0.0f);
     void Reload();

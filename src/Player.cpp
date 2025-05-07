@@ -20,6 +20,7 @@ void Player::Update(const std::vector<Rect>& environment,
                     std::vector<GameObjects::AmmoCrate>& ammoCrates,
                     std::vector<GameObjects::Key>& keys, 
                     const std::vector<GameObjects::TransitionBox>& transitionBoxes,
+                    const std::vector<Primitives2D::Circle>& enemies,
                     const Vec2& mousePos, 
                     double deltaTime)
 {
@@ -33,6 +34,7 @@ void Player::Update(const std::vector<Rect>& environment,
     CheckForTransitionCollisions(transitionBoxes);
     CheckForAmmoPickups(ammoCrates);
     CheckForKeyPickups(keys);
+    CheckForEnemyCollisions(enemies);
 
     m_body = CreateUniformShape(m_position, 10.0f, 8);
     m_shotgun.Update(deltaTime);
@@ -52,7 +54,11 @@ void Player::Render() const
         line.Render(0, 255, 0, 255);
 
     m_shotgun.Render();
-    RenderCursor();
+   
+    // Render cursor center shape
+    const std::vector<Primitives2D::LineSegment> centerShape = CreateUniformShape(m_mousePos, m_cursorCurrentRadius, 8);
+    for (const LineSegment& segment : centerShape)
+        segment.Render(255, 0, 0, 255);
 }
 
 void Player::UpdateCursor(const Vec2& mousePos)
@@ -72,15 +78,6 @@ void Player::UpdateCursor(const Vec2& mousePos)
     // Calculates cursor radius
     float lerpLength = (length - minLength) / (maxLength - minLength);
     m_cursorCurrentRadius = Lerp(m_cursorMinRadius, m_cursorMaxRadius, lerpLength);
-}
-
-void Player::RenderCursor() const
-{
-    const std::vector<Primitives2D::LineSegment> centerShape = CreateUniformShape(m_mousePos, m_cursorCurrentRadius, 8);
-
-    // Render center shape
-    for (const LineSegment& segment : centerShape)
-        segment.Render(255, 0, 0, 255);
 }
 
 // ---------------- Class functions ------------------ //
@@ -200,6 +197,9 @@ void Player::CheckForTransitionCollisions(const std::vector<GameObjects::Transit
                     m_position.y = Settings::WINDOW_HEIGHT - 50;
             }
 
+            // Removes all shotgun traces
+            m_shotgun.ClearTraces();
+
             // Just loads a new level
             m_pGame->LoadLevel(box.nextLevelID);
         }
@@ -281,6 +281,28 @@ void Player::CheckForKeyPickups(std::vector<GameObjects::Key>& keys)
 
             break;
         }
+    }
+}
+
+void Player::CheckForEnemyCollisions(const std::vector<Primitives2D::Circle>& enemies)
+{
+    for (const Primitives2D::Circle& enemy : enemies)
+    {
+        if (!CheckCircleCircleCollision({ m_position, 10.0f }, enemy)) continue;
+
+        // TODO : 
+        // Maybe move player out of bounds and disable update/handle inputs functions
+        // then play some animation or sum before reseting
+
+        // Resets all unlocked items
+        m_pGame->GetUnlockedObjects().reset();
+
+        // Resets ammunition
+        m_shotgun.SetCurrentReserveAmmo(0);
+        m_shotgun.SetCurrentMagAmmo(0);
+
+        // Loads main menu
+        m_pGame->LoadLevel(1);
     }
 }
 

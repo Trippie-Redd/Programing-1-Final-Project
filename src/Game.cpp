@@ -75,8 +75,14 @@ void Game::Update()
 	m_lastTime = m_currentTime;
 
 	HandleEvents();
+	
+	std::vector<Circle> enemyCircles;
+	for (const Enemy& enemy : m_enemies)
+	{
+		enemyCircles.emplace_back(static_cast<Circle>(enemy));
+	}
 
-	m_player.Update(m_environment, m_ammoCrates, m_keys, m_transitions, m_mousePos, m_deltaTime);
+	m_player.Update(m_environment, m_ammoCrates, m_keys, m_transitions, enemyCircles, m_mousePos, m_deltaTime);
 
 	// No need to render or update enemies if player has already quit the game
 	if (!m_isRunning) return;
@@ -289,17 +295,14 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		if (m_unlockedGameObjects.test(65536 * static_cast<int>(GameObjects::GameObjectsEnum::Enemies) + ID)) continue;
 
 		std::string type = enemy["type"].GetString();
-		int locationX = enemy["locationX"].GetInt();
-		int locationY = enemy["locationY"].GetInt();
 		int pathStartX = enemy["pathStartX"].GetInt();
 		int pathStartY = enemy["pathStartY"].GetInt();
 		int pathEndX = enemy["pathEndX"].GetInt();
 		int pathEndY = enemy["pathEndY"].GetInt();
 
-		const Vec2 position(locationX, locationY);
 		const LineSegment path(Vec2(pathStartX, pathStartY), Vec2(pathEndX, pathEndY));
 
-		m_enemies.emplace_back(Enemy::enemyMap.at(type), position, path, ID);
+		m_enemies.emplace_back(Enemy::enemyMap.at(type), path, ID);
 	}
 
 	// Access ammoCrates

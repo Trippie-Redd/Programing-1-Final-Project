@@ -3,7 +3,7 @@
 Walls:
     - Nothing
 Enemies:
-    - Nothing
+    - Reserve 0, 1 to be safe
 AmmoCrates:
     - Nothing
 Keys:

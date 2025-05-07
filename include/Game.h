@@ -13,7 +13,7 @@ public:
 
 	void HandleEvents();
 	void Update();
-	void Render() ;
+	void Render();
 
 	void LoadLevel(uint16_t nexLevelID);
 
@@ -44,5 +44,4 @@ private:
 	uint32_t m_lastTime = 0;
 	float m_deltaTime = 0.0f;
 
-	uint16_t m_currentLevelID;
 };

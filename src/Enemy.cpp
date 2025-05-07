@@ -2,8 +2,9 @@
 
 using namespace Primitives2D;
 
-Enemy::Enemy(EnemyTypes type, const Vec2& position, const LineSegment& path, uint16_t ID)
-    : m_position(position)
+Enemy::Enemy(EnemyTypes type, const LineSegment& path, uint16_t ID)
+    : Circle(path.start, 8.0f)
+    , m_position(path.start)
     , m_path(path)
     , m_targetPosition(path.end)
     , m_currentState(EnemyStates::Normal)
@@ -12,13 +13,25 @@ Enemy::Enemy(EnemyTypes type, const Vec2& position, const LineSegment& path, uin
     switch (type)
     {
     case EnemyTypes::Fast:
+        m_walkingSpeed = 30.0f;
+        m_investigateSpeed = 45.0f;
+        m_chasingSpeed = 60.0f;
+        m_health = 10;
         break;
     case EnemyTypes::Brute:
+        m_walkingSpeed = 20.0f;
+        m_investigateSpeed = 25.0f;
+        m_chasingSpeed = 30.0f;
+        m_health = 30;
         break;
     case EnemyTypes::Boss:
+        m_walkingSpeed = 25.0f;
+        m_investigateSpeed = 40.0f;
+        m_chasingSpeed = 50.0f;
+        m_health = 20;
         break;
     default:
-        std::cout << "Invalid enemy type!" << '\n';
+        std::cerr << "Invalid enemy type!" << '\n';
         break;
     }
 }
@@ -64,9 +77,10 @@ void Enemy::Update(float deltaTime, const Player& player, const std::vector<Prim
     }
 
     m_position += m_velocity * deltaTime;
+    center = m_position;
     m_velocity *= 0.98f;
 
-    m_shape = Primitives2D::CreateUniformShape(m_position, 10.0f, 8);
+    m_shape = Primitives2D::CreateUniformShape(m_position, 10.0f, static_cast<int>(radius));
 }
 
 void Enemy::Render()

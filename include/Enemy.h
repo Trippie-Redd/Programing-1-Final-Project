@@ -19,11 +19,10 @@ enum class EnemyTypes
     Boss
 };
 
-
-class Enemy
+class Enemy : public Primitives2D::Circle
 {
 public:
-    Enemy(EnemyTypes type, const Vec2& position, const Primitives2D::LineSegment& path, uint16_t ID);
+    Enemy(EnemyTypes type, const Primitives2D::LineSegment& path, uint16_t ID);
     ~Enemy();
 
     void Update(float deltaTime, const Player& player, const std::vector<Primitives2D::Rect>& environment, const std::vector<GameObjects::Door>& doors);
@@ -33,7 +32,6 @@ public:
     static const std::unordered_map<std::string, EnemyTypes> enemyMap;
 
 private:
-    Primitives2D::Circle m_hitbox;
     Raycast m_sight;
     Raycast m_tempSight;
     Vec2 m_velocity;
@@ -52,6 +50,7 @@ private:
     float m_fov = 60.0f;
     float m_idleTimer = 3.0f;
     uint16_t m_ID;
+    int m_health;
 
 private:
     bool CheckIfSeesPlayer(const Player& player, const std::vector<Primitives2D::Rect>& environment);

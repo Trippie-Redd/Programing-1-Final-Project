@@ -24,7 +24,8 @@ public:
     void Update(const std::vector<Primitives2D::Rect>& environment,
         std::vector<GameObjects::AmmoCrate>& ammoCrates,
         std::vector<GameObjects::Key>& keys,
-		const std::vector<GameObjects::TransitionBox>& transitionBoxes,
+        const std::vector<GameObjects::TransitionBox>& transitionBoxes,
+        const std::vector<Primitives2D::Circle>& enemies,
         const Vec2& mousePos,
         double deltaTime);
     void Render() const;
@@ -65,7 +66,6 @@ private:
     Vec2 m_mousePos;
 
 private:
-    void RenderCursor() const;
     void UpdateCursor(const Vec2& mousePos);
     float Lerp(float a, float b, float t) const { return a + t * (b - a); }
 
@@ -73,6 +73,7 @@ private:
     void CheckForAmmoPickups(std::vector<GameObjects::AmmoCrate>& ammoCrates);
     void CheckForKeyPickups(std::vector<GameObjects::Key>& keys);
 	void CheckForTransitionCollisions(const std::vector<GameObjects::TransitionBox>& transitionBoxes);
+    void CheckForEnemyCollisions(const std::vector<Primitives2D::Circle>& enemies);
 
     void UnlockGameObject(GameObjects::GameObjectsEnum type, uint16_t ID);
 

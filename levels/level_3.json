@@ -1,0 +1,121 @@
+{
+    "walls": [
+        {
+            "x": 0,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 1895,
+            "y": 0,
+            "width": 25,
+            "height": 465
+        },
+        {
+            "x": 1895,
+            "y": 615,
+            "width": 25,
+            "height": 465
+        },
+        {
+            "x": 25,
+            "y": 1055,
+            "width": 1870,
+            "height": 25
+        },
+        {
+            "x": 25,
+            "y": 0,
+            "width": 810,
+            "height": 25
+        },
+        {
+            "x": 1085,
+            "y": 0,
+            "width": 810,
+            "height": 25
+        },
+        {
+            "x": 355,
+            "y": 710,
+            "width": 150,
+            "height": 150
+        },
+        {
+            "x": 1415,
+            "y": 158,
+            "width": 150,
+            "height": 150
+        },
+        {
+            "x": 1085,
+            "y": 25,
+            "width": 25,
+            "height": 540
+        },
+        {
+            "x": 810,
+            "y": 515,
+            "width": 25,
+            "height": 540
+        }
+    ],
+    "enemies": [
+        {
+            "type": "Fast",
+            "pathStartX": 1680,
+            "pathStartY": 913,
+            "pathEndX": 1025,
+            "pathEndY": 913,
+            "ID": 2
+        },
+        {
+            "type": "Fast",
+            "pathStartX": 617,
+            "pathStartY": 192,
+            "pathEndX": 617,
+            "pathEndY": 777,
+            "ID": 3
+        },
+        {
+            "type": "Fast",
+            "pathStartX": 144,
+            "pathStartY": 777,
+            "pathEndX": 144,
+            "pathEndY": 192,
+            "ID": 4
+        }
+    ],
+    "ammoCrates": [
+    ],
+    "keys": [
+        {
+            "x": 112,
+            "y": 938,
+            "ID": 2
+        }
+    ],
+    "doors": [
+    ],
+    "transitionBoxes": [
+        {
+            "x": 835,
+            "y": 0,
+            "width": 250,
+            "height": 25,
+            "nextLevelID": 4,
+            "keyID": 2
+        },
+        {
+            "x": 1895,
+            "y": 465,
+            "width": 25,
+            "height": 150,
+            "nextLevelID": 2,
+            "keyID": 1
+        }
+    ],
+    "texts": [
+    ]
+}
