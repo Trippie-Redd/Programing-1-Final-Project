@@ -13,6 +13,8 @@ public:
 
     void RenderTexture() const;
     bool CreateTextTexture(const char* text, size_t length, float ptsize, const SDL_Color& color, const Vec2& position);
+    void ClearTexture();
+    bool IsNull() const { return m_texture == nullptr;  };
 
     static bool InitTextEngine();
     static void DestroyTextEngine();

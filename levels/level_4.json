@@ -1,0 +1,127 @@
+{
+    "walls": [
+        {
+            "x": 0,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 1895,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 25,
+            "y": 1055,
+            "width": 810,
+            "height": 25
+        },
+        {
+            "x": 1085,
+            "y": 1055,
+            "width": 810,
+            "height": 25
+        },
+        {
+            "x": 25,
+            "y": 0,
+            "width": 1720,
+            "height": 25
+        },
+        {
+            "x": 810,
+            "y": 555,
+            "width": 25,
+            "height": 500
+        },
+        {
+            "x": 310,
+            "y": 555,
+            "width": 500,
+            "height": 25
+        },
+        {
+            "x": 1085,
+            "y": 555,
+            "width": 25,
+            "height": 500
+        },
+        {
+            "x": 1100,
+            "y": 555,
+            "width": 500,
+            "height": 25
+        }
+    ],
+    "enemies": [
+        {
+            "type": "Brute",
+            "pathStartX": 918,
+            "pathStartY": 732,
+            "pathEndX": 918,
+            "pathEndY": 92,
+            "ID": 401
+        },
+        {
+            "type": "Brute",
+            "pathStartX": 1251,
+            "pathStartY": 613,
+            "pathEndX": 1773,
+            "pathEndY": 933,
+            "ID": 402
+        },
+        {
+            "type": "Fast",
+            "pathStartX": 388,
+            "pathStartY": 613,
+            "pathEndX": 388,
+            "pathEndY": 933,
+            "ID": 403
+        }
+    ],
+    "ammoCrates": [
+        {
+            "x": 1183,
+            "y": 713,
+            "ammoCount": 3,
+            "ID": 401
+        },
+        {
+            "x": 1251,
+            "y": 915,
+            "ammoCount": 2,
+            "ID": 402
+        }
+    ],
+    "keys": [
+        {
+            "x": 676,
+            "y": 783,
+            "ID": 401
+        }
+    ],
+    "doors": [
+    ],
+    "transitionBoxes": [
+        {
+            "x": 835,
+            "y": 1055,
+            "width": 250,
+            "height": 25,
+            "nextLevelID": 3,
+            "keyID": 301
+        },
+        {
+            "x": 1745,
+            "y": 0,
+            "width": 150,
+            "height": 25,
+            "nextLevelID": 5,
+            "keyID": 401
+        }
+    ],
+    "texts": [
+    ]
+}

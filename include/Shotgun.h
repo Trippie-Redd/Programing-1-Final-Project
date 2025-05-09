@@ -40,12 +40,13 @@ public:
 private:
     std::vector<ShotgunBlast> m_blasts;
     Text m_ammoText;
+    Text m_testText;
 
     float m_currentTransparency = 255;
 
     const int m_bulletAmount = 5;
     int m_maxMagAmmo = 8;
     int m_maxReserveAmmo = 80;
-    int m_currentMagAmmo = m_maxMagAmmo;
-    int m_currentReserveAmmo = m_maxMagAmmo;
+    int m_currentMagAmmo = 0;
+    int m_currentReserveAmmo = 0;
 };

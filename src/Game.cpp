@@ -76,10 +76,11 @@ void Game::Update()
 
 	HandleEvents();
 	
+	// Isolate circles
 	std::vector<Circle> enemyCircles;
 	for (const Enemy& enemy : m_enemies)
 	{
-		enemyCircles.emplace_back(static_cast<Circle>(enemy));
+		enemyCircles.push_back(enemy.GetHitbox());
 	}
 
 	m_player.Update(m_environment, m_ammoCrates, m_keys, m_transitions, enemyCircles, m_mousePos, m_deltaTime);
@@ -137,7 +138,8 @@ void Game::Render()
 
 	for (const Text& text : m_text)
 	{
-		text.RenderTexture();
+		if (!text.IsNull())
+			text.RenderTexture();
 	}
 
 	m_player.Render();
@@ -238,7 +240,10 @@ void Game::LoadLevel(uint16_t nexLevelID)
 	m_keys.clear();
 	m_doors.clear();
 	m_enemies.clear();
-	m_text.clear();
+	for (int i = 0; i < 10; i++)
+	{
+		m_text[i].ClearTexture();
+	}
 	
 	// level_0 reserved for exiting the game
 	if (nexLevelID == 0)
@@ -370,7 +375,14 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		m_transitions.emplace_back(Vec2(x, y), width, height, nextLevelID, keyID);
 	}
 
+	// Access text
 	const Value& texts = document["texts"];
+	if (texts.Size() > 10)
+	{
+		std::cerr << "There can max be 10 text elements at once, and level has: " << texts.Size() << '\n';
+		return;
+	}
+
 	for (SizeType i = 0; i < texts.Size(); i++)
 	{
 		const Value& text = texts[i];
@@ -388,7 +400,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		std::cout << "succesfully created text" << '\n';
 
 		SDL_Color color = { r, g, b, a };
-		m_text.emplace_back(content, length, ptsize, color, Vec2(x, y));
+		m_text[i].CreateTextTexture(content, length, ptsize, color, Vec2(x, y));
 	}
 
 	std::cout << filename << " loaded" << '\n';

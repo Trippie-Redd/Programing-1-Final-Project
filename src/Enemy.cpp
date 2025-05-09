@@ -3,8 +3,7 @@
 using namespace Primitives2D;
 
 Enemy::Enemy(EnemyTypes type, const LineSegment& path, uint16_t ID)
-    : Circle(path.start, 8.0f)
-    , m_position(path.start)
+    : m_position(path.start)
     , m_path(path)
     , m_targetPosition(path.end)
     , m_currentState(EnemyStates::Normal)
@@ -13,25 +12,17 @@ Enemy::Enemy(EnemyTypes type, const LineSegment& path, uint16_t ID)
     switch (type)
     {
     case EnemyTypes::Fast:
-        m_walkingSpeed = 30.0f;
-        m_investigateSpeed = 45.0f;
-        m_chasingSpeed = 60.0f;
-        m_health = 10;
+        SetStats(8.0f, 35.0f, 50.0f, 70.0f, 10, 2.5f, 60.0f);
         break;
     case EnemyTypes::Brute:
-        m_walkingSpeed = 20.0f;
-        m_investigateSpeed = 25.0f;
-        m_chasingSpeed = 30.0f;
-        m_health = 30;
+        SetStats(15.0f, 30.0f, 35.0f, 40.0f, 30, 1.5f, 70.0f);
         break;
     case EnemyTypes::Boss:
-        m_walkingSpeed = 25.0f;
-        m_investigateSpeed = 40.0f;
-        m_chasingSpeed = 50.0f;
-        m_health = 20;
+        SetStats(12.0f, 30.0f, 45.0f, 60.0f, 20, 1.0f, 70.0f);
         break;
     default:
         std::cerr << "Invalid enemy type!" << '\n';
+        SetStats(10.0f, 30.0f, 40.0f, 50.0f, 15, 2.0f, 60.0f);
         break;
     }
 }
@@ -77,10 +68,10 @@ void Enemy::Update(float deltaTime, const Player& player, const std::vector<Prim
     }
 
     m_position += m_velocity * deltaTime;
-    center = m_position;
+    m_hitbox.center = m_position;
     m_velocity *= 0.98f;
 
-    m_shape = Primitives2D::CreateUniformShape(m_position, 10.0f, static_cast<int>(radius));
+    m_shape = Primitives2D::CreateUniformShape(m_position, 10.0f, static_cast<int>(m_hitbox.radius));
 }
 
 void Enemy::Render()
@@ -186,6 +177,23 @@ void Enemy::ChasePlayer(float deltaTime, const Vec2& playerPos)
     m_targetPosition = playerPos;
     if (!hasReachedTarget())
         FollowPath(deltaTime, m_chasingSpeed);
+}
+
+void Enemy::SetStats(float hitboxRadius, 
+                     float walkingSpeed, 
+                     float investigateSpeed, 
+                     float chasingSpeed, 
+                     int health, 
+                     float idleTimer,
+                     float fov)
+{
+    m_hitbox           = { m_position, hitboxRadius};
+    m_walkingSpeed     = walkingSpeed;
+    m_investigateSpeed = investigateSpeed;
+    m_chasingSpeed     = chasingSpeed;
+    m_health           = health;
+    m_idleTimer        = idleTimer;
+    m_fov              = fov;
 }
 
 const std::unordered_map<std::string, EnemyTypes> Enemy::enemyMap = {

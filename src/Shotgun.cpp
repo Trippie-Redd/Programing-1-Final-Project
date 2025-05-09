@@ -15,10 +15,6 @@ void Shotgun::Update(float deltaTime)
     {
         m_blasts[i].alpha -= 95.0f * deltaTime;
 
-        // bout to do sum crazy here
-        // hol up
-        // still havent done anything crazy
-        // one more day tho
         if (m_blasts[i].alpha <= 0)
         {
             m_blasts.erase(m_blasts.begin() + i);
@@ -30,6 +26,7 @@ void Shotgun::Update(float deltaTime)
     char ammoText[8];
     sprintf(ammoText, "%d%c%d", m_currentMagAmmo, '/', m_currentReserveAmmo);
     m_ammoText.CreateTextTexture(ammoText, strlen(ammoText), 20.0f, { 255, 0, 0 }, Vec2(5.0f, 5.0f));
+
 }
 
 void Shotgun::Render() const

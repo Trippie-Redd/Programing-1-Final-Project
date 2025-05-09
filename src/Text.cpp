@@ -12,11 +12,19 @@ Text::Text(const char* text, size_t length, float ptsize, const SDL_Color& color
 
 Text::~Text()
 {
+    ClearTexture();
+}
+
+void Text::ClearTexture()
+{
     if (m_texture)
     {
         SDL_DestroyTexture(m_texture);
         m_texture = nullptr;
     }
+    
+    m_dimensions = Vec2::Zero();
+    m_position   = Vec2::Zero();
 }
 
 void Text::RenderTexture() const
@@ -96,12 +104,12 @@ bool Text::CreateTextTexture(const char* text, size_t length, float ptsize, cons
         return false;
     }
 
-    float width = static_cast<float>(textSurface->w);
+    float width  = static_cast<float>(textSurface->w);
     float height = static_cast<float>(textSurface->h);
     SDL_DestroySurface(textSurface);
 
     m_dimensions = Vec2(width, height);
-    m_position = position;
     m_texture = textTexture;
+    m_position = position;
     return true;
 }

@@ -68,7 +68,7 @@
             "pathStartY": 913,
             "pathEndX": 1025,
             "pathEndY": 913,
-            "ID": 2
+            "ID": 301
         },
         {
             "type": "Fast",
@@ -76,7 +76,7 @@
             "pathStartY": 192,
             "pathEndX": 617,
             "pathEndY": 777,
-            "ID": 3
+            "ID": 302
         },
         {
             "type": "Fast",
@@ -84,7 +84,7 @@
             "pathStartY": 777,
             "pathEndX": 144,
             "pathEndY": 192,
-            "ID": 4
+            "ID": 303
         }
     ],
     "ammoCrates": [
@@ -93,7 +93,7 @@
         {
             "x": 112,
             "y": 938,
-            "ID": 2
+            "ID": 301
         }
     ],
     "doors": [
@@ -105,7 +105,7 @@
             "width": 250,
             "height": 25,
             "nextLevelID": 4,
-            "keyID": 2
+            "keyID": 301
         },
         {
             "x": 1895,
@@ -113,7 +113,7 @@
             "width": 25,
             "height": 150,
             "nextLevelID": 2,
-            "keyID": 1
+            "keyID": 201
         }
     ],
     "texts": [

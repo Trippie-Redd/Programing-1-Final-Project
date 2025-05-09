@@ -35,7 +35,7 @@ private:
 	std::vector<GameObjects::Key>            m_keys;
 	std::vector<GameObjects::Door>           m_doors;
 	std::vector<Enemy>                       m_enemies;
-	std::vector<Text>                        m_text;
+	Text m_text[10]; // Use array for text becasuse vector is cooked
 
 	std::bitset<65536*GameObjects::GAME_OBJECTS_ENUM_LENGTH> m_unlockedGameObjects; // uint16_t max value is 65535
 

@@ -68,26 +68,26 @@
             "x": 136,
             "y": 741,
             "ammoCount": 2,
-            "ID": 3
+            "ID": 201
         },
         {
             "x": 156,
             "y": 891,
             "ammoCount": 1,
-            "ID": 4
+            "ID": 202
         },
         {
             "x": 1729,
             "y": 773,
             "ammoCount": 2,
-            "ID": 5
+            "ID": 203
         }
     ],
     "keys": [
         {
             "x": 944,
             "y": 159,
-            "ID": 1
+            "ID": 201
         }
     ],
     "doors": [
@@ -107,7 +107,7 @@
             "width": 25,
             "height": 150,
             "nextLevelID": 3,
-            "keyID": 1
+            "keyID": 201
         },
         {
             "x": 1895,
@@ -115,7 +115,7 @@
             "width": 25,
             "height": 150,
             "nextLevelID": 6,
-            "keyID": 1
+            "keyID": 201
         }
     ],
     "texts": [
