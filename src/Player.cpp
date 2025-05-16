@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "Game.h"
 #include "Settings.h"
+#include "AudioManager.h"
 
 using namespace Primitives2D;
 
@@ -24,13 +25,20 @@ void Player::Update(const std::vector<Rect>& environment,
                     const Vec2& mousePos, 
                     double deltaTime)
 {
-    // Decrease noise value
-    m_noise = m_noise > m_hitboxRadius ? m_noise * 0.9f * deltaTime : 0.0f;
-
+    // Only thing that needs to be updated when player is dead is enemy collisions
+    // Because of sudo-timer
+    if (m_isDead)
+    {
+        CheckForEnemyCollisions(enemies);
+        return;
+    }
+    
+    // Apply position and decrease velocity
     m_position += m_velocity * deltaTime;
     m_velocity *= 0.9f;
 
-    HandleWallCollisions(environment);
+    // Check for collisions with all game objects
+    CheckForWallCollisions(environment);
     CheckForTransitionCollisions(transitionBoxes);
     CheckForAmmoPickups(ammoCrates);
     CheckForKeyPickups(keys);
@@ -43,12 +51,8 @@ void Player::Update(const std::vector<Rect>& environment,
 
 void Player::Render() const
 {
-    if (m_noise > m_hitboxRadius)
-    {
-        std::vector<Primitives2D::LineSegment> noiseVisual = CreateUniformShape(m_position, m_noise, 8);
-        for (const LineSegment& line : noiseVisual)
-            line.Render(0, 220, 255, 200);
-    }
+    // No need to render anything if player is dead
+    if (m_isDead) return;
 
     for (const LineSegment& line : m_body)
         line.Render(0, 255, 0, 255);
@@ -108,8 +112,10 @@ void Player::Move(enum Direction dir, double deltaTime)
 
 void Player::Shoot(const std::vector<Rect>& environment, const Vec2& mousePos)
 {
-    m_noise = m_shotgun.Shoot(environment, m_position, mousePos, m_cursorCurrentRadius, m_noise);
-    //std::cout << m_noise << '\n';
+    // Shouldn't shoot if player is dead
+    if (m_isDead) return;
+
+    m_shotgun.Shoot(environment, m_position, mousePos, m_cursorCurrentRadius);
 }
 
 void Player::Reload()
@@ -117,7 +123,7 @@ void Player::Reload()
     m_shotgun.Reload();
 }
 
-void Player::HandleWallCollisions(const std::vector<Rect>& environment)
+void Player::CheckForWallCollisions(const std::vector<Rect>& environment)
 {
     bool collided = false;
     Vec2 totalCorrection(0, 0);
@@ -248,7 +254,7 @@ void Player::CheckForAmmoPickups(std::vector<GameObjects::AmmoCrate>& ammoCrates
     // Don't pickup if ammo is already maxed out
     if (m_shotgun.GetCurrentReserveAmmo() >= m_shotgun.GetMaxReserveAmmo()) return;
 
-    for (int i = 0; i < ammoCrates.size(); i++)
+    for (size_t i = 0; i < ammoCrates.size(); i++)
     {
         if (CheckRectCircleCollision(Primitives2D::Rect(ammoCrates[i].GetTopLeft(), ammoCrates[i].GetWidth(), ammoCrates[i].GetHeight()), { m_position, m_hitboxRadius }))
         {
@@ -268,7 +274,7 @@ void Player::CheckForAmmoPickups(std::vector<GameObjects::AmmoCrate>& ammoCrates
 
 void Player::CheckForKeyPickups(std::vector<GameObjects::Key>& keys)
 {
-    for (int i = 0; i < keys.size(); i++)
+    for (size_t i = 0; i < keys.size(); i++)
     {
         if (CheckRectCircleCollision(Primitives2D::Rect(keys[i].GetTopLeft(), keys[i].GetWidth(), keys[i].GetHeight()), { m_position, m_hitboxRadius }))
         {
@@ -288,21 +294,42 @@ void Player::CheckForEnemyCollisions(const std::vector<Primitives2D::Circle>& en
 {
     for (const Primitives2D::Circle& enemy : enemies)
     {
-        if (!CheckCircleCircleCollision({ m_position, 10.0f }, enemy)) continue;
+        if (!CheckCircleCircleCollision({ m_position, m_hitboxRadius }, enemy)) continue;
+        
+        // Runs when player is in game over screen
+        if (m_isDead)
+        {
+            // Resets all unlocked game objects
+            m_pGame->GetUnlockedObjects().reset();
 
-        // TODO : 
-        // Maybe move player out of bounds and disable update/handle inputs functions
-        // then play some animation or sum before reseting
+            // Places player at middle of screen
+            m_position = { Settings::WINDOW_WIDTH / 2, Settings::WINDOW_HEIGHT / 2 };
+            m_velocity = Vec2::Zero();
 
-        // Resets all unlocked items
-        m_pGame->GetUnlockedObjects().reset();
+            // Starts song again
+            AudioManager::GetInstance().Play(AudioEnum::Music);
 
-        // Resets ammunition
-        m_shotgun.SetCurrentReserveAmmo(0);
-        m_shotgun.SetCurrentMagAmmo(0);
+            m_pGame->LoadLevel(1);
+            m_isDead = false;
+        }
+        // Puts player into game over screen when touching an enemy
+        else
+        {
+            m_isDead = true;
 
-        // Loads main menu
-        m_pGame->LoadLevel(1);
+            // Stops all audio and plays game over sfx
+            AudioManager::GetInstance().StopAll();
+            AudioManager::GetInstance().Play(AudioEnum::GameOver);
+
+            // Resets ammunition and shotgun traces
+            m_shotgun.SetCurrentReserveAmmo(0);
+            m_shotgun.SetCurrentMagAmmo(0);
+            m_shotgun.ClearTraces();
+
+            m_position = { -3000.0f, 0.0f };
+
+            m_pGame->LoadLevel(999); // Game over screen
+        }
     }
 }
 

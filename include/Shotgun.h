@@ -6,10 +6,15 @@
 struct ShotgunBlast
 {
     Raycast rays;
+    Raycast collisionRays;
+    bool collisionChecked;
     float alpha;
 
     ShotgunBlast(const Raycast& rays, float alpha)
-        : rays(rays), alpha(alpha)
+        : rays(rays)
+        , collisionRays(rays)
+        , collisionChecked(false)
+        , alpha(alpha)
     {
     }
 };
@@ -23,10 +28,11 @@ public:
     void Update(float deltaTime);
     void Render() const;
 
-    int GetCurrentReserveAmmo() const { return m_currentReserveAmmo; }
-    int GetMaxReserveAmmo()     const { return m_maxReserveAmmo; }
-    int GetCurrentMagAmmo()     const { return m_currentMagAmmo; }
-    int GetMaxMagAmmo()         const { return m_maxMagAmmo; }
+    int GetCurrentReserveAmmo()                            const { return m_currentReserveAmmo; }
+    int GetMaxReserveAmmo()                                const { return m_maxReserveAmmo; }
+    int GetCurrentMagAmmo()                                const { return m_currentMagAmmo; }
+    int GetMaxMagAmmo()                                    const { return m_maxMagAmmo; }
+    const std::vector<ShotgunBlast>& GetShotgunBlastsRef() const{ return m_blasts; }
 
     void SetCurrentReserveAmmo(uint8_t value) { m_currentReserveAmmo = value; }
     void SetCurrentMagAmmo(uint8_t value)     { m_currentMagAmmo = value; }
@@ -34,7 +40,7 @@ public:
     void AddReserveAmmo(int amount) { m_currentReserveAmmo = m_currentReserveAmmo + amount > m_maxReserveAmmo ? m_maxReserveAmmo : m_currentReserveAmmo + amount; }
     void ClearTraces() { m_blasts.clear(); }
 
-    float Shoot(const std::vector<Primitives2D::Rect>& environment, const Vec2& playerPos, const Vec2& position, float radius, float currentNoise = 0.0f);
+    void Shoot(const std::vector<Primitives2D::Rect>& environment, const Vec2& playerPos, const Vec2& position, float radius);
     void Reload();
 
 private:

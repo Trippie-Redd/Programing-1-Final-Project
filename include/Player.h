@@ -3,8 +3,6 @@
 #include "Shotgun.h"
 #include <bitset>
 
-// Forward decleration
-// TODO : Change this if there is time 
 class Game;
 
 enum Direction
@@ -30,12 +28,11 @@ public:
         double deltaTime);
     void Render() const;
 
-    Vec2 GetOrigin()        const { return m_position; }
-    float GetHitboxRadius() const { return m_hitboxRadius; }
-    float GetNoise()        const { return m_noise; }
+    Vec2 GetOrigin()               const { return m_position; }
+    float GetHitboxRadius()        const { return m_hitboxRadius; }
+    const Shotgun& GetShotgunRef() const { return m_shotgun; }
 
-    // TODO : maybe move all of this into the constructor
-    void setCurrentSpeed(float speed) { m_currentSpeed = speed; }
+    void SetCurrentSpeed(float speed) { m_currentSpeed = speed; }
     void SetGamePointer(Game* pGame) { m_pGame = pGame; }
 
     void Move(enum Direction dir, double deltaTime);
@@ -49,9 +46,9 @@ public:
 private:
     Vec2 m_position;
     float m_hitboxRadius = 10.0f;
-    float m_noise = 0.0f;
     std::vector<Primitives2D::LineSegment> m_body;
     Shotgun m_shotgun;
+    bool m_isDead = false;
     Game* m_pGame = nullptr;
 
     // Movement vars
@@ -69,7 +66,7 @@ private:
     void UpdateCursor(const Vec2& mousePos);
     float Lerp(float a, float b, float t) const { return a + t * (b - a); }
 
-    void HandleWallCollisions(const std::vector<Primitives2D::Rect>& environment);
+    void CheckForWallCollisions(const std::vector<Primitives2D::Rect>& environment);
     void CheckForAmmoPickups(std::vector<GameObjects::AmmoCrate>& ammoCrates);
     void CheckForKeyPickups(std::vector<GameObjects::Key>& keys);
 	void CheckForTransitionCollisions(const std::vector<GameObjects::TransitionBox>& transitionBoxes);

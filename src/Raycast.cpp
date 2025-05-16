@@ -42,7 +42,7 @@ void Raycast::RenderGeometry()
     std::sort(m_rays.begin(), m_rays.end(), [](LineSegment a, LineSegment b) { return a.angle < b.angle; });
 
     SDL_Renderer* renderer = RendererManager::GetInstance().GetRenderer();
-    for (int i = 0; i < rayCount; i++)
+    for (size_t i = 0; i < rayCount; i++)
     {
         // Makes sure that the last tri uses the endpoints of first and last ray
         int nextIdx = (i + 1) % rayCount;
@@ -52,9 +52,9 @@ void Raycast::RenderGeometry()
 
         // Defines vertices for tri to render
         SDL_Vertex vertices[] = {
-            {{m_rays[i].start.x, m_rays[i].start.y},         {1.0f, 1.0f, 0.0f, 0.7f}}, // Origin point
-            {{m_rays[i].end.x, m_rays[i].end.y},             {1.0f, 1.0f, 0.0f, 0.7f}}, // Current ray end point
-            {{m_rays[nextIdx].end.x, m_rays[nextIdx].end.y}, {1.0f, 1.0f, 0.0f, 0.7f}}, // Next ray end point
+            {{m_rays[i].start.x, m_rays[i].start.y},         {1.0f, 1.0f, 0.0f, 0.5f}}, // Origin point
+            {{m_rays[i].end.x, m_rays[i].end.y},             {1.0f, 1.0f, 0.0f, 0.5f}}, // Current ray end point
+            {{m_rays[nextIdx].end.x, m_rays[nextIdx].end.y}, {1.0f, 1.0f, 0.0f, 0.5f}}, // Next ray end point
         };
 
         // Renders tris

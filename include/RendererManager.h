@@ -5,31 +5,19 @@
 class RendererManager
 {
 public:
-    // Get singleton instance
     static RendererManager& GetInstance();
+    bool Init(SDL_Window* window);
+    void Destroy();
 
-    // Cleanup resources
-    static void Destroy();
-
-    // Initialize the renderer
-    void Init(SDL_Window* window);
-
-    // Get the renderer
     SDL_Renderer* GetRenderer();
 
-    // Clean up
-    ~RendererManager();
-
 private:
-    // Private static instance pointer
-    static RendererManager* s_instance;
+    RendererManager() : m_renderer(nullptr) {}
+    ~RendererManager() = default;
 
-    // Private renderer pointer
     SDL_Renderer* m_renderer;
 
-    // Private constructor to prevent direct instantiation
-    RendererManager() : m_renderer(nullptr) {}
-
+private:
     // Prevent copy and assignment
     RendererManager(const RendererManager&)            = delete;
     RendererManager& operator=(const RendererManager&) = delete;

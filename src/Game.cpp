@@ -2,6 +2,7 @@
 
 #include "Settings.h"
 #include "RendererManager.h"
+#include "AudioManager.h"
 #include <string>
 
 #include "rapidjson/document.h" 
@@ -15,18 +16,19 @@ using namespace Primitives2D;
 
 Game::Game()
 {
-	int flags = 0;
-	if (Settings::FULLSCREEN)
-	{
-		flags = SDL_WINDOW_FULLSCREEN;
-	}
+	int flags = Settings::FULLSCREEN ? SDL_WINDOW_FULLSCREEN : 0 ;
+
 
 	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
-		std::cerr << "SDL initialization failed! Error: " << SDL_GetError() << '\n';
+		std::cerr << "SDL video initialization failed! Error: " << SDL_GetError() << '\n';
 		return;
 	}
-	std::cout << "SDL succesfully initialized!" << '\n';
+	std::cout << "SDL video succesfully initialized!" << '\n';
+
+	// Initalize and load audio before creating window, because it's ugly otherwise
+	AudioManager::GetInstance().Init();
+	AudioManager::GetInstance().LoadAudio(AudioEnum::Music);
 
 	m_window = SDL_CreateWindow(Settings::TITLE, Settings::WINDOW_WIDTH, Settings::WINDOW_HEIGHT, flags);
 	if (!m_window)
@@ -37,6 +39,7 @@ Game::Game()
 	std::cout << "Window succesfully created!" << '\n';
 
 	RendererManager::GetInstance().Init(m_window);
+	AudioManager::GetInstance().Play(AudioEnum::Music);
 
 	// Consider doing alot of this stuff before creating a window
 	Text::InitTextEngine();
@@ -58,7 +61,8 @@ Game::Game()
 Game::~Game()
 {
 	GameObjects::DestroyTextures();
-	RendererManager::Destroy();
+	AudioManager::GetInstance().Destroy();
+	RendererManager::GetInstance().Destroy();
 	SDL_DestroyWindow(m_window);
 	SDL_Quit();
 
@@ -77,10 +81,10 @@ void Game::Update()
 	HandleEvents();
 	
 	// Isolate circles
-	std::vector<Circle> enemyCircles;
-	for (const Enemy& enemy : m_enemies)
+	std::vector<Circle> enemyCircles(m_enemies.size());
+	for (size_t i = 0; i < m_enemies.size(); i++)
 	{
-		enemyCircles.push_back(enemy.GetHitbox());
+		enemyCircles[i] = m_enemies[i].GetHitbox();
 	}
 
 	m_player.Update(m_environment, m_ammoCrates, m_keys, m_transitions, enemyCircles, m_mousePos, m_deltaTime);
@@ -88,9 +92,14 @@ void Game::Update()
 	// No need to render or update enemies if player has already quit the game
 	if (!m_isRunning) return;
 
-	for (Enemy& enemy : m_enemies)
+	for (size_t i = 0; i < m_enemies.size(); i++)
 	{
-		enemy.Update(m_deltaTime, m_player, m_environment, m_doors);
+		m_enemies[i].Update(m_deltaTime, m_player, m_environment, m_player.GetShotgunRef());
+		if (m_enemies[i].isDead)
+		{
+			m_enemies.erase(m_enemies.begin() + i);
+			i--;
+		}
 	}
 
 	Render();
@@ -123,11 +132,6 @@ void Game::Render()
 	for (const GameObjects::Key& key : m_keys)
 	{
 		RenderTexture(key, GameObjects::GameObjectsEnum::Keys);
-	}
-
-	for (const GameObjects::Door& door : m_doors)
-	{
-		door.Render(181, 98, 20, 255);
 	}
 
 	// TODO : CHANGE THIS TO CONST / don't sort sight raycast in render func
@@ -193,11 +197,11 @@ void Game::HandleEvents()
 	// For sprinting input
 	if (keystate[SDL_SCANCODE_LSHIFT])
 	{
-		m_player.setCurrentSpeed(m_player.SPRINTING_SPEED);
+		m_player.SetCurrentSpeed(m_player.SPRINTING_SPEED);
 	}
 	else
 	{
-		m_player.setCurrentSpeed(m_player.WALKING_SPEED);
+		m_player.SetCurrentSpeed(m_player.WALKING_SPEED);
 	}
 
 	// For reloading
@@ -238,9 +242,8 @@ void Game::LoadLevel(uint16_t nexLevelID)
 	m_ammoCrates.clear();
 	m_transitions.clear();
 	m_keys.clear();
-	m_doors.clear();
 	m_enemies.clear();
-	for (int i = 0; i < 10; i++)
+	for (uint8_t i = 0; i < TEXT_BUFFER_SIZE; i++)
 	{
 		m_text[i].ClearTexture();
 	}
@@ -280,7 +283,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 
 	// Access walls
 	const Value& walls = document["walls"];
-	for (SizeType i = 0; i < walls.Size(); i++)
+	for (size_t i = 0; i < walls.Size(); i++)
 	{
 		const Value& wall = walls[i];
 		int x = wall["x"].GetInt();
@@ -293,7 +296,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 
 	// Access enemies
 	const Value& enemies = document["enemies"];
-	for (SizeType i = 0; i < enemies.Size(); i++)
+	for (size_t i = 0; i < enemies.Size(); i++)
 	{
 		const Value& enemy = enemies[i];
 		uint16_t ID = enemy["ID"].GetUint();
@@ -307,12 +310,12 @@ void Game::LoadLevel(uint16_t nexLevelID)
 
 		const LineSegment path(Vec2(pathStartX, pathStartY), Vec2(pathEndX, pathEndY));
 
-		m_enemies.emplace_back(Enemy::enemyMap.at(type), path, ID);
+		m_enemies.emplace_back(Enemy::enemyMap.at(type), path, ID, this);
 	}
 
 	// Access ammoCrates
 	const Value& ammoCrates = document["ammoCrates"];
-	for (SizeType i = 0; i < ammoCrates.Size(); i++)
+	for (size_t i = 0; i < ammoCrates.Size(); i++)
 	{
 		const Value& ammoCrate = ammoCrates[i];
 		uint16_t ID = ammoCrate["ID"].GetUint();
@@ -327,7 +330,7 @@ void Game::LoadLevel(uint16_t nexLevelID)
 
 	// Access keys
 	const Value& keys = document["keys"];
-	for (SizeType i = 0; i < keys.Size(); i++)
+	for (size_t i = 0; i < keys.Size(); i++)
 	{
 		const Value& key = keys[i];
 		uint16_t ID = key["ID"].GetUint();
@@ -339,28 +342,9 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		m_keys.emplace_back(Vec2(x, y), ID);
 	}
 
-	// Access doors
-	const Value& doors = document["doors"];
-	for (SizeType i = 0; i < doors.Size(); i++)
-	{
-		const Value& door = doors[i];
-		uint16_t ID = door["ID"].GetUint();
-		if (m_unlockedGameObjects.test(65536 * static_cast<int>(GameObjects::GameObjectsEnum::Doors) + ID)) continue;
-
-		int x = door["x"].GetInt();
-		int y = door["y"].GetInt();
-		int width = door["width"].GetInt();
-		int height = door["height"].GetInt();
-
-		int hingePosX = door["hingePosX"].GetInt();
-		int hingePosY = door["hingePosY"].GetInt();
-
-		m_doors.emplace_back(Vec2(x, y), width, height, Vec2(hingePosX, hingePosY), ID);
-	}
-
 	// Access transition boxes
 	const Value& transitionBoxes = document["transitionBoxes"];
-	for (SizeType i = 0; i < transitionBoxes.Size(); i++)
+	for (size_t i = 0; i < transitionBoxes.Size(); i++)
 	{
 		const Value& transitionBox = transitionBoxes[i];
 
@@ -377,13 +361,13 @@ void Game::LoadLevel(uint16_t nexLevelID)
 
 	// Access text
 	const Value& texts = document["texts"];
-	if (texts.Size() > 10)
+	if (texts.Size() > TEXT_BUFFER_SIZE)
 	{
 		std::cerr << "There can max be 10 text elements at once, and level has: " << texts.Size() << '\n';
 		return;
 	}
 
-	for (SizeType i = 0; i < texts.Size(); i++)
+	for (size_t i = 0; i < texts.Size(); i++)
 	{
 		const Value& text = texts[i];
 

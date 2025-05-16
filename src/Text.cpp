@@ -35,12 +35,6 @@ void Text::RenderTexture() const
         return;
     }
 
-    /*
-    * 
-    * FIXME : Can only render one text instance at a time using a vector
-    * 
-    */
-
     SDL_FRect rect = { m_position.x, m_position.y, m_dimensions.x, m_dimensions.y };
 
     if (!SDL_RenderTexture(RendererManager::GetInstance().GetRenderer(), m_texture, nullptr, &rect))

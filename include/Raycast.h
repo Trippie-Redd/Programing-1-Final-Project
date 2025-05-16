@@ -12,7 +12,8 @@ public:
     void Render(bool drawHits = false, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 255) const;
     void RenderGeometry();
 
-    std::vector<Primitives2D::LineSegment> getRays() const { return m_rays; }
+    // TODO : Maybe return a ref here
+    const std::vector<Primitives2D::LineSegment>& GetRays() const { return m_rays; }
 
     void CastRaysAtVertices(const Vec2& origin,
         const std::vector<Primitives2D::Rect>& environment,

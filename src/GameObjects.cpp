@@ -1,16 +1,6 @@
 #include "GameObjects.h"
 #include "RendererManager.h"
-/*
-* 
-* Maybe move all texture stuff into separate 
-* class/singleton if it grows to expansive,
-* probably do this
-* 
-* texture ideas:
-* store them in an unordered_map<std::string/const char* name, SDL_Texture* texture>
-*               or unordered_map<Enum name, SDL_Texture* texture>
-* 
-*/
+
 using namespace Primitives2D;
 
 namespace GameObjects
@@ -82,12 +72,6 @@ namespace GameObjects
 
     Key::Key(const Vec2& position, uint16_t ID)
         : Rect(position, 32, 32) // Texture is 32x32 px
-        , ID(ID)
-    {}
-    
-    Door::Door(const Vec2& position, float width, float height, const Vec2& hingePos, uint16_t ID)
-        : Rect(position, width, height)
-        , hingePos(hingePos)
         , ID(ID)
     {}
 

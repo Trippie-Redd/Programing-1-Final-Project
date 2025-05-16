@@ -4,21 +4,19 @@
 #include "SDL3/SDL.h"
 
 
-
 namespace GameObjects
 {
-    static constexpr int GAME_OBJECTS_ENUM_LENGTH = 4;
     enum class GameObjectsEnum
     {
-        AmmoCrates,
+        AmmoCrates = 0,
         Keys,
-        Doors,
-        Enemies
+        Enemies,
+        GAME_OBJECTS_COUNT = 3
     };
 
     struct CompleteTexture
     {
-        SDL_Texture* texture;
+        SDL_Texture* texture = nullptr;
         Vec2 dimensions;
     };
 
@@ -28,7 +26,7 @@ namespace GameObjects
     void RenderTexture(const Primitives2D::Rect& object, GameObjectsEnum type);
 
     // Holds all textures used for game objects
-    static CompleteTexture s_textures[GAME_OBJECTS_ENUM_LENGTH];
+    static CompleteTexture s_textures[static_cast<int>(GameObjectsEnum::GAME_OBJECTS_COUNT)];
     
     struct AmmoCrate : Primitives2D::Rect
     {
@@ -43,14 +41,6 @@ namespace GameObjects
         uint16_t ID;
 
         Key(const Vec2& position, uint16_t ID);
-    };
-
-    struct Door : Primitives2D::Rect
-    {
-        Vec2 hingePos;
-        uint16_t ID;
-
-        Door(const Vec2& position, float width, float height, const Vec2& hingePos, uint16_t ID);
     };
 
     struct TransitionBox : Primitives2D::Rect

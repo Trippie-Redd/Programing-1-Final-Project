@@ -2,8 +2,10 @@
 
 #include "Player.h"
 #include "Enemy.h"
-#include "SDL3/SDL.h"
 #include "Text.h"
+#include <SDL3/SDL.h>
+
+constexpr uint8_t TEXT_BUFFER_SIZE = 10;
 
 class Game
 {
@@ -18,7 +20,7 @@ public:
 	void LoadLevel(uint16_t nexLevelID);
 
 	bool Running() const;
-	std::bitset<65536 * GameObjects::GAME_OBJECTS_ENUM_LENGTH>& GetUnlockedObjects() { return m_unlockedGameObjects;  }
+	std::bitset<65536 * (int)GameObjects::GameObjectsEnum::GAME_OBJECTS_COUNT>& GetUnlockedObjects() { return m_unlockedGameObjects;  }
 
 private:
 	bool m_isRunning = false;
@@ -33,11 +35,11 @@ private:
 	std::vector<GameObjects::AmmoCrate>      m_ammoCrates;
 	std::vector<GameObjects::TransitionBox>  m_transitions;
 	std::vector<GameObjects::Key>            m_keys;
-	std::vector<GameObjects::Door>           m_doors;
 	std::vector<Enemy>                       m_enemies;
-	Text m_text[10]; // Use array for text becasuse vector is cooked
+	Text m_text[TEXT_BUFFER_SIZE]; // Use array for text becasuse vector is cooked
 
-	std::bitset<65536*GameObjects::GAME_OBJECTS_ENUM_LENGTH> m_unlockedGameObjects; // uint16_t max value is 65535
+	// Tracks which game objects player has unlocked / killed
+	std::bitset<65536*(int)GameObjects::GameObjectsEnum::GAME_OBJECTS_COUNT> m_unlockedGameObjects; // uint16_t max value is 65535
 
 	// Delta time vars
 	uint32_t m_currentTime = 0;

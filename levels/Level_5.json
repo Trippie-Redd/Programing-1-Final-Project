@@ -1,0 +1,140 @@
+{
+    "walls": [
+        {
+            "x": 0,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 1895,
+            "y": 0,
+            "width": 25,
+            "height": 440
+        },
+        {
+            "x": 1895,
+            "y": 640,
+            "width": 25,
+            "height": 440
+        },
+        {
+            "x": 25,
+            "y": 0,
+            "width": 1870,
+            "height": 25
+        },
+        {
+            "x": 175,
+            "y": 1055,
+            "width": 1720,
+            "height": 25
+        },
+        {
+            "x": 324,
+            "y": 215,
+            "width": 225,
+            "height": 225
+        },
+        {
+            "x": 842,
+            "y": 215,
+            "width": 225,
+            "height": 225
+        },
+        {
+            "x": 1372,
+            "y": 215,
+            "width": 225,
+            "height": 225
+        },
+        {
+            "x": 324,
+            "y": 640,
+            "width": 225,
+            "height": 225
+        },
+        {
+            "x": 842,
+            "y": 640,
+            "width": 225,
+            "height": 225
+        },
+        {
+            "x": 1372,
+            "y": 640,
+            "width": 225,
+            "height": 225
+        }
+    ],
+    "enemies": [
+        {
+            "type": "Fast",
+            "pathStartX": 1605,
+            "pathStartY": 491,
+            "pathEndX": 217,
+            "pathEndY": 491,
+            "ID": 501
+        },
+        {
+            "type": "Fast",
+            "pathStartX": 217,
+            "pathStartY": 68,
+            "pathEndX": 1605,
+            "pathEndY": 68,
+            "ID": 502
+        },
+        {
+            "type": "Brute",
+            "pathStartX": 70,
+            "pathStartY": 943,
+            "pathEndX": 70,
+            "pathEndY": 101,
+            "ID": 503
+        },
+        {
+            "type": "Brute",
+            "pathStartX": 1721,
+            "pathStartY": 68,
+            "pathEndX": 1721,
+            "pathEndY": 910,
+            "ID": 504
+        }
+    ],
+    "ammoCrates": [
+    ],
+    "keys": [
+        {
+            "x": 70,
+            "y": 53,
+            "ID": 501
+        },
+        {
+            "x": 1530,
+            "y": 101,
+            "ID": 502
+        }
+    ],
+    "doors": [
+    ],
+    "transitionBoxes": [
+        {
+            "x": 25,
+            "y": 1055,
+            "width": 150,
+            "height": 25,
+            "nextLevelID": 4,
+            "keyID": 401
+        },
+        {
+            "x": 1895,
+            "y": 440,
+            "width": 25,
+            "height": 200,
+            "nextLevelID": 6,
+            "keyID": 501
+        }
+    ],
+    "texts": [
+    ]
+}

@@ -10,9 +10,23 @@ Shotgun::~Shotgun() = default;
 
 void Shotgun::Update(float deltaTime)
 {
-    // Decreases constanly alpha, removes from vector if alpha is < 0
-    for (int i = 0; i < m_blasts.size(); i++)
+    for (size_t i = 0; i < m_blasts.size(); i++)
     {
+        // Removes shotgun ray collision after 1 frame
+        if (m_blasts[i].collisionChecked)
+        {
+            // Only clear collisionRays if they have not previously been cleared
+            if (!m_blasts[i].collisionRays.GetRays().empty())
+            {
+                m_blasts[i].collisionRays.ResetRays();
+            }
+        }
+        else
+        {
+            m_blasts[i].collisionChecked = true;
+        }
+
+        // Decreases constanly alpha, removes from vector if alpha is < 0
         m_blasts[i].alpha -= 95.0f * deltaTime;
 
         if (m_blasts[i].alpha <= 0)
@@ -25,7 +39,7 @@ void Shotgun::Update(float deltaTime)
     // Updates ammo count text
     char ammoText[8];
     sprintf(ammoText, "%d%c%d", m_currentMagAmmo, '/', m_currentReserveAmmo);
-    m_ammoText.CreateTextTexture(ammoText, strlen(ammoText), 20.0f, { 255, 0, 0 }, Vec2(5.0f, 5.0f));
+    m_ammoText.CreateTextTexture(ammoText, strlen(ammoText), 22.0f, { 255, 0, 0 }, Vec2(4.0f, 4.0f));
 
 }
 
@@ -45,9 +59,9 @@ void Shotgun::Render() const
 // ---------------- Class functions ------------------ //
 
 // Returns a noise value
-float Shotgun::Shoot(const std::vector<Primitives2D::Rect>& environment, const Vec2& playerPos, const Vec2& position, float radius, float currentNoise)
+void Shotgun::Shoot(const std::vector<Primitives2D::Rect>& environment, const Vec2& playerPos, const Vec2& position, float radius)
 {
-    if (m_currentMagAmmo <= 0) return 0;
+    if (m_currentMagAmmo <= 0) return;
     m_currentMagAmmo--;
 
     Raycast newBlast;
@@ -70,10 +84,6 @@ float Shotgun::Shoot(const std::vector<Primitives2D::Rect>& environment, const V
     }
 
     m_blasts.emplace_back(newBlast, 255.0f);
-
-    // Calculate noise value 
-    currentNoise += 1;
-    return 30 * std::pow(currentNoise, 0.3);
 }
 
 void Shotgun::Reload()

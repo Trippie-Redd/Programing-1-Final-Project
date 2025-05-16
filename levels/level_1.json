@@ -38,6 +38,14 @@
         }
     ],
     "enemies": [
+        {
+            "type": "Tutorial",
+            "pathStartX": 1680,
+            "pathStartY": 500,
+            "pathEndX": 1680,
+            "pathEndY": 500,
+            "ID": 101
+        }
     ],
     "ammoCrates": [
         {
@@ -49,13 +57,13 @@
         {
             "x": 356,
             "y": 814,
-            "ammoCount": 8,
+            "ammoCount": 3,
             "ID": 102
         },
         {
             "x": 286,
             "y": 931,
-            "ammoCount": 6,
+            "ammoCount": 8,
             "ID":  103
         }
     ],
@@ -126,6 +134,16 @@
             "a": 255,
             "x": 877,
             "y": 65
+        },
+        {
+            "content": "Kill enemies",
+            "ptsize": 25,
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255,
+            "x": 1590,
+            "y": 415
         }
     ]
 }

@@ -1,63 +1,66 @@
 #include "RendererManager.h"
-
 #include <iostream>
-#include <string>
 
-// Define the static instance
-RendererManager* RendererManager::s_instance = nullptr;
-
+//-----------------------------------------------------------------------------
+// Returns reference to singelton instance
+//-----------------------------------------------------------------------------
 RendererManager& RendererManager::GetInstance()
 {
-    if (s_instance == nullptr)
-    {
-        s_instance = new RendererManager();
-    }
-    return *s_instance;
+    static RendererManager instance;
+    return instance;
 }
 
-void RendererManager::Destroy()
-{
-    if (s_instance != nullptr)
-    {
-        delete s_instance;
-        s_instance = nullptr;
-    }
-}
 
-void RendererManager::Init(SDL_Window* window)
+//-----------------------------------------------------------------------------
+// Initalizes the SDL Renderer ands set draw mode to blend
+//-----------------------------------------------------------------------------
+bool RendererManager::Init(SDL_Window* window)
 {
+    // Checks if renderer has already been created
     if (m_renderer != nullptr)
     {
         SDL_DestroyRenderer(m_renderer);
+        std::cout << "RendererManager Init has previously been called! Destroying SDL_Renderer and creating new." << '\n';
     }
 
     m_renderer = SDL_CreateRenderer(window, nullptr);
 
+    // Checks if SDL_CreateRenderer failed
     if (m_renderer == nullptr)
     {
         std::cerr << "SDL_CreateRenderer failed! Error: " << SDL_GetError() << '\n';
-        return;
+        return false;
     }
 
     SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
-    std::cout << "Renderer succesfully created!" << '\n';
+    return true;
 }
 
-SDL_Renderer* RendererManager::GetRenderer()
-{
-    if (m_renderer == nullptr)
-    {
-        throw std::runtime_error("Renderer not initialized");
-    }
 
-    return m_renderer;
-}
-
-RendererManager::~RendererManager()
+//-----------------------------------------------------------------------------
+// Destructor, destroys SDL_Renderer
+//-----------------------------------------------------------------------------
+void RendererManager::Destroy()
 {
+    // Destroys SDL_Renderer
     if (m_renderer != nullptr)
     {
         SDL_DestroyRenderer(m_renderer);
         m_renderer = nullptr;
     }
+}
+
+
+//-----------------------------------------------------------------------------
+// Returns pointer to SDL_Renderer in use
+//-----------------------------------------------------------------------------
+SDL_Renderer* RendererManager::GetRenderer()
+{
+    // Checks if renderer is initialized
+    if (m_renderer == nullptr)
+    {
+        std::cerr << "Renderer not initialized" << '\n';
+    }
+
+    return m_renderer;
 }
