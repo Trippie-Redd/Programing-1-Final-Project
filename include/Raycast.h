@@ -1,18 +1,17 @@
 #pragma once
 
 #include "GameObjects.h"
-//#include "Settings.h"
 
 class Raycast
 {
 public:
-    Raycast();
-    ~Raycast();
+    Raycast()  = default;
+    ~Raycast() = default;
 
     void Render(bool drawHits = false, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 255) const;
-    void RenderGeometry();
+    void RenderGeometry() const;
+    void SortRays();
 
-    // TODO : Maybe return a ref here
     const std::vector<Primitives2D::LineSegment>& GetRays() const { return m_rays; }
 
     void CastRaysAtVertices(const Vec2& origin,
@@ -24,7 +23,6 @@ public:
 
 private:
     static constexpr float m_RAY_LENGTH = 100000.0f;
-    static constexpr float m_PI = 3.1415927f;
 
     std::vector<Primitives2D::LineSegment> m_rays;
     std::vector<Vec2> m_rayHits;

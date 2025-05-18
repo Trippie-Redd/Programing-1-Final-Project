@@ -35,7 +35,7 @@ public:
         const Player& player, 
         const std::vector<Primitives2D::Rect>& environment,
         const Shotgun& playerShotgun);
-    void Render();
+    void Render() const;
 
 public:
     static const std::unordered_map<std::string, EnemyTypes> enemyMap;
@@ -69,6 +69,6 @@ private:
     void Idle(float deltaTime);
     void ChasePlayer(float deltaTime, const Vec2& playerPos);
 
-    bool hasReachedTarget() const { return (m_position - m_targetPosition).Length() <= 2.0f; }
+    bool HasReachedTarget() const { return (m_position - m_targetPosition).Length() <= 2.0f; }
     void SetStats(float hitboxRadius, float walkingSpeed, float chasingSpeed, int health, float idleTime, float fov);
 };

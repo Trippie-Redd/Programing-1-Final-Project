@@ -4,30 +4,36 @@
 
 using namespace Primitives2D;
 
-// ------------- Constructors/Destructor ------------- //
-
-Raycast::Raycast() = default;
-
-Raycast::~Raycast() = default;
-
-// ----------------- Update/Render ------------------- //
-
+//-----------------------------------------------------------------------------
+// Renders each LineSegment in the raycast with a specified color and opacity
+// Can also render every hitpoint for each ray
+//-----------------------------------------------------------------------------
 void Raycast::Render(bool drawHits, uint8_t r, uint8_t g, uint8_t b, uint8_t a) const
 {
     // Render each ray as a line from origin to intersection point
     for (const LineSegment& ray : m_rays)
+    {
         ray.Render(r, g, b, a);
-
+    }
+       
     if (!drawHits) return;
 
     // Draw ray hit points
     SDL_Renderer* renderer = RendererManager::GetInstance().GetRenderer();
     SDL_SetRenderDrawColor(renderer, 200, 0, 0, 255);
     for (const Vec2& hit : m_rayHits)
+    {
         Rect(Vec2(hit.x - 5, hit.y - 5), 10, 10).Render(r, g, b, a);
+    }
 }
 
-void Raycast::RenderGeometry()
+
+//-----------------------------------------------------------------------------
+// Renders a filled shape of every raycast LineSegment, 
+// call SortRays() before this
+// Used for enemy fov visualisation
+//-----------------------------------------------------------------------------
+void Raycast::RenderGeometry() const
 {
     size_t rayCount = m_rays.size();
 
@@ -37,9 +43,6 @@ void Raycast::RenderGeometry()
         std::cout << "Cannot render triangles with fewer than 2 rays" << '\n';
         return;
     }
-
-    // Sort rays based upon angle
-    std::sort(m_rays.begin(), m_rays.end(), [](LineSegment a, LineSegment b) { return a.angle < b.angle; });
 
     SDL_Renderer* renderer = RendererManager::GetInstance().GetRenderer();
     for (size_t i = 0; i < rayCount; i++)
@@ -59,19 +62,33 @@ void Raycast::RenderGeometry()
 
         // Renders tris
         if (!SDL_RenderGeometry(renderer, NULL, vertices, 3, NULL, 0))
+        {
             std::cout << "Raycast RenderGeometry failed! Error: " << SDL_GetError() << '\n';
+        }
     }
 }
 
-// ---------------- Class functions ------------------ //
 
+//-----------------------------------------------------------------------------
+// Sort rays based upon angle
+// Call before using RenderGeometry()
+//-----------------------------------------------------------------------------
+void Raycast::SortRays()
+{
+    std::sort(m_rays.begin(), m_rays.end(), [](LineSegment a, LineSegment b) { return a.angle < b.angle; });
+}
+
+
+//-----------------------------------------------------------------------------
+// Casts rays at every wall vertex within a area defined by fov and fovCenter
+//-----------------------------------------------------------------------------
 void Raycast::CastRaysAtVertices(const Vec2& origin, const std::vector<Rect>& environment, const Vec2& fovCenter, float fov)
 {
     // Free up rays/rayHits to remove rays no longer needed
     ResetRays();
 
     // Converts angle from degrees to radians
-    fov *= m_PI / 180.0f;
+    fov *= PI / 180.0f;
 
     // Small offset for rays left/right of main ray
     const float ANGLE_OFFSET = 0.0001f;
@@ -114,7 +131,7 @@ void Raycast::CastRaysAtVertices(const Vec2& origin, const std::vector<Rect>& en
             Vec2 toVertexDir = vertex - origin;
             float angleToVertex = atan2(toVertexDir.y, toVertexDir.x);
             float angleDiff = angleToVertex - centralAngle;
-            angleDiff = std::remainder(angleDiff, 2.0f * m_PI);
+            angleDiff = std::remainder(angleDiff, 2.0f * PI);
             if (std::abs(angleDiff) > fov / 2.0f) continue;
 
             // Cast the main ray
@@ -148,6 +165,11 @@ void Raycast::CastRaysAtVertices(const Vec2& origin, const std::vector<Rect>& en
     }
 }
 
+
+//-----------------------------------------------------------------------------
+// Casts a ray from one position to another, ray can have a 
+// defined or (practically) infinite length
+//-----------------------------------------------------------------------------
 bool Raycast::CastRayToPos(const Vec2& origin, const Vec2& pos, const std::vector<Rect>& environment, bool infiniteLength)
 {
     // Casts a ray to a postion, ray is infinitely long
@@ -165,6 +187,11 @@ bool Raycast::CastRayToPos(const Vec2& origin, const Vec2& pos, const std::vecto
     }
 }
 
+
+//-----------------------------------------------------------------------------
+// Finds the closest intersection between a ray and the walls,
+// adds the ray with calculated end point to m_rays vector
+//-----------------------------------------------------------------------------
 bool Raycast::FindClosestIntersection(const Vec2& origin, const Vec2& rayEnd, const std::vector<Rect>& environment, const LineSegment& referenceLine)
 {
     Vec2 closestHit = rayEnd;
@@ -203,6 +230,10 @@ bool Raycast::FindClosestIntersection(const Vec2& origin, const Vec2& rayEnd, co
     return result;
 }
 
+
+//-----------------------------------------------------------------------------
+// Sets the angle of a ray relative to a reference line
+//-----------------------------------------------------------------------------
 void Raycast::SetRayAngle(LineSegment& ray, const LineSegment& referenceLine)
 {
     // Calculate rays line vector
@@ -220,6 +251,10 @@ void Raycast::SetRayAngle(LineSegment& ray, const LineSegment& referenceLine)
     ray.angle = rAngle;
 }
 
+
+//-----------------------------------------------------------------------------
+// Clears all rays and ray hits
+//-----------------------------------------------------------------------------
 void Raycast::ResetRays()
 {
     m_rays.clear();

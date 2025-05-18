@@ -1,13 +1,9 @@
 #include "Shotgun.h"
 
-// ------------- Constructors/Destructor ------------- //
-
-Shotgun::Shotgun() = default;
-
-Shotgun::~Shotgun() = default;
-
-// ----------------- Update/Render ------------------- //
-
+//-----------------------------------------------------------------------------
+// Decreased opacity of shotgun rays, removes collision rays after 1 frame
+// and updates ammo text
+//-----------------------------------------------------------------------------
 void Shotgun::Update(float deltaTime)
 {
     for (size_t i = 0; i < m_blasts.size(); i++)
@@ -43,6 +39,10 @@ void Shotgun::Update(float deltaTime)
 
 }
 
+
+//-----------------------------------------------------------------------------
+// Renders all shotgun rays and ammo text
+//-----------------------------------------------------------------------------
 void Shotgun::Render() const
 {
     // Render every line for every shotgunblast
@@ -56,9 +56,10 @@ void Shotgun::Render() const
     m_ammoText.RenderTexture();
 }
 
-// ---------------- Class functions ------------------ //
 
-// Returns a noise value
+//-----------------------------------------------------------------------------
+// Shoots m_bulletAmount rays at random spots within cursor
+//-----------------------------------------------------------------------------
 void Shotgun::Shoot(const std::vector<Primitives2D::Rect>& environment, const Vec2& playerPos, const Vec2& position, float radius)
 {
     if (m_currentMagAmmo <= 0) return;
@@ -69,7 +70,7 @@ void Shotgun::Shoot(const std::vector<Primitives2D::Rect>& environment, const Ve
     for (int i = 0; i < m_bulletAmount; i++)
     {
         // Generate random radians 0 - 2PI
-        float angle = (float)rand() / RAND_MAX * 2.0f * 3.1415927f; // PI
+        float angle = (float)rand() / RAND_MAX * 2.0f * PI;
 
         // Generate random distance 0 - radius
         float distance = sqrt((float)rand() / RAND_MAX) * radius;
@@ -86,6 +87,10 @@ void Shotgun::Shoot(const std::vector<Primitives2D::Rect>& environment, const Ve
     m_blasts.emplace_back(newBlast, 255.0f);
 }
 
+
+//-----------------------------------------------------------------------------
+// Basic reload logic for shotgun
+//-----------------------------------------------------------------------------
 void Shotgun::Reload()
 {
     // First calc ammount of ammo to take from mag

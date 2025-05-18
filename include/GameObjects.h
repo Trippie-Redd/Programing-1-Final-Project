@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Primitives2D.h"
-#include "SDL3/SDL.h"
-
+#include <SDL3/SDL.h>
 
 namespace GameObjects
 {
@@ -19,14 +18,15 @@ namespace GameObjects
         SDL_Texture* texture = nullptr;
         Vec2 dimensions;
     };
-
+    
+    // Texture related functions
     void LoadTextures();
     void LoadSingleTexture(const char* filepath, GameObjectsEnum type);
     void DestroyTextures();
     void RenderTexture(const Primitives2D::Rect& object, GameObjectsEnum type);
 
     // Holds all textures used for game objects
-    static CompleteTexture s_textures[static_cast<int>(GameObjectsEnum::GAME_OBJECTS_COUNT)];
+    extern CompleteTexture s_textures[static_cast<int>(GameObjectsEnum::GAME_OBJECTS_COUNT)];
     
     struct AmmoCrate : Primitives2D::Rect
     {

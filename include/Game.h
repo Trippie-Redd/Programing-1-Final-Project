@@ -15,12 +15,12 @@ public:
 
 	void HandleEvents();
 	void Update();
-	void Render();
+	void Render() const;
 
 	void LoadLevel(uint16_t nexLevelID);
 
-	bool Running() const;
-	std::bitset<65536 * (int)GameObjects::GameObjectsEnum::GAME_OBJECTS_COUNT>& GetUnlockedObjects() { return m_unlockedGameObjects;  }
+	bool Running() const { return m_isRunning; }
+	std::bitset<65536 * static_cast<int>(GameObjects::GameObjectsEnum::GAME_OBJECTS_COUNT)>& GetUnlockedObjects() { return m_unlockedGameObjects;  }
 
 private:
 	bool m_isRunning = false;
@@ -39,7 +39,7 @@ private:
 	Text m_text[TEXT_BUFFER_SIZE]; // Use array for text becasuse vector is cooked
 
 	// Tracks which game objects player has unlocked / killed
-	std::bitset<65536*(int)GameObjects::GameObjectsEnum::GAME_OBJECTS_COUNT> m_unlockedGameObjects; // uint16_t max value is 65535
+	std::bitset<65536 * static_cast<int>(GameObjects::GameObjectsEnum::GAME_OBJECTS_COUNT)> m_unlockedGameObjects; // uint16_t max value is 65535
 
 	// Delta time vars
 	uint32_t m_currentTime = 0;

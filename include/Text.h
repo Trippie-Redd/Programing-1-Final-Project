@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Vec2.h"
-#include "SDL3_ttf/SDL_ttf.h"
+#include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3/SDL.h>
 
 class Text

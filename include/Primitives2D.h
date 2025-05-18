@@ -17,7 +17,7 @@ namespace Primitives2D
     {
         Vec2 start;
         Vec2 end;
-        double angle;
+        double angle = 0.0f;
 
         LineSegment() = default;
 
@@ -34,7 +34,7 @@ namespace Primitives2D
         void Render(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const;
 
         LineSegment CreateCrossingLineSegment(const Vec2& middlePoint, float length) const;
-        float Length() const { return std::sqrt(std::pow(end.x - start.x, 2) + std::pow(end.y - start.y, 2)); }
+        float Length() const { return Vec2(end.x - start.x, end.y - start.y).Length(); }
     };
 
     struct Circle

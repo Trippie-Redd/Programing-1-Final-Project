@@ -4,34 +4,51 @@
 
 namespace Primitives2D
 {
-    // LineSegments for raycast; sight and shotgun/guns
-    // Rectes for walls; the entire enviroment
-    // Circles for entities; player and enemies          
-
+    //-----------------------------------------------------------------------------
+    // Renders a line with a specified color and opacity
+    //-----------------------------------------------------------------------------
     void LineSegment::Render(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const
     {
         SDL_Renderer* renderer = RendererManager::GetInstance().GetRenderer();
         SDL_SetRenderDrawColor(renderer, r, g, b, a);
         if (!SDL_RenderLine(renderer, start.x, start.y, end.x, end.y))
+        {
             std::cout << "SDL_RenderLine in LineSegment failed! Error: " << SDL_GetError() << '\n';
+        }
     }
 
+
+    //-----------------------------------------------------------------------------
+    // Renders a rect with a specified color and opacity, can render both 
+    // filled and non-filled rects
+    //-----------------------------------------------------------------------------
     void Rect::Render(uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool fillRect) const
     {
         SDL_Renderer* renderer = RendererManager::GetInstance().GetRenderer();
         SDL_SetRenderDrawColor(renderer, r, g, b, a);
 
         const SDL_FRect rect = { min.x, min.y, GetWidth(), GetHeight() };
-        if (fillRect)
+        // If rectangle should be a solid color
+        if (fillRect) 
         {
             if (!SDL_RenderFillRect(renderer, &rect))
+            {
                 std::cerr << "SDL_RenderFillRect in struct Rect failed! Error: " << SDL_GetError() << '\n';
+            }
+            return;
         }
-
+        // If rectangle should be rendered hollow in the middle
         if (!SDL_RenderRect(renderer, &rect))
+        {
             std::cerr << "SDL_RenderRect in struct Rect failed! Error: " << SDL_GetError() << '\n';
+        }
     }
 
+
+    //-----------------------------------------------------------------------------
+    // Returns a vector of {sides} element, shaped in a uniform shape around
+    // {pos} with a radius of {radius}
+    //-----------------------------------------------------------------------------
     std::vector<LineSegment> CreateUniformShape(const Vec2& pos, float radius, int sides)
     {
         std::vector<LineSegment> segments;
@@ -39,8 +56,9 @@ namespace Primitives2D
         // Calculate points for a regular shape
         for (int i = 0; i < sides; i++)
         {
-            float angle1 = 2.0f * 3.14159265358979323846f * i / sides;
-            float angle2 = 2.0f * 3.14159265358979323846f * (i + 1) / sides;
+            // USE PI!!!
+            float angle1 = 2.0f * PI * i / sides;
+            float angle2 = 2.0f * PI * (i + 1) / sides;
 
             Vec2 p1(pos.x + radius * cosf(angle1),
                 pos.y + radius * sinf(angle1));
@@ -53,7 +71,11 @@ namespace Primitives2D
         return segments;
     }
 
+
+    //-----------------------------------------------------------------------------
     // Create a perpendicular line segment that crosses the original one
+    // Used for enemy - player detection sight
+    //-----------------------------------------------------------------------------
     LineSegment LineSegment::CreateCrossingLineSegment(const Vec2& middlePoint, float length) const
     {
         // Calculate direction vector of original line
@@ -74,13 +96,18 @@ namespace Primitives2D
         return perpendicular;
     }
 
+
+    //-----------------------------------------------------------------------------
+    // Takes in Vec2 point and LineSegment, returns the Vec2 which is closest to
+    // point and on the LineSegment
+    //-----------------------------------------------------------------------------
     Vec2 ClosestPointOnLine(const Vec2& point, const LineSegment& line)
     {
         Vec2 lineVec = line.end - line.start;
         Vec2 pointVec = point - line.start;
 
         float lineLength = line.Length();
-        float projection = (pointVec.x * lineVec.x + pointVec.y * lineVec.y) / (lineLength * lineLength);
+        float projection = pointVec.Dot(lineVec) / (lineLength * lineLength);
 
         // Clamp projection to line segment bounds
         projection = std::max(0.0f, std::min(1.0f, projection));
@@ -89,6 +116,12 @@ namespace Primitives2D
         return line.start + lineVec * projection;
     }
 
+
+    //-----------------------------------------------------------------------------
+    // Takes in LineSegment and Circle, returns true 
+    // (aswell as the postition of their first collision) if they collide,
+    // otherwise returns false
+    //-----------------------------------------------------------------------------
     Intersect CheckLineCircleCollision(const LineSegment& line, const Circle& circle)
     {
         Intersect result;
@@ -97,11 +130,10 @@ namespace Primitives2D
         Vec2 closestPoint = ClosestPointOnLine(circle.center, line);
 
         // Calculate squared distance from closest point to circle center
-        float distanceSquared = std::pow(closestPoint.x - circle.center.x, 2) +
-            std::pow(closestPoint.y - circle.center.y, 2);
+        float lengthSquared = Vec2(closestPoint.x - circle.center.x, closestPoint.y - circle.center.y).LengthSquared();
 
         // Check if closest point is within circle radius
-        result.result = distanceSquared <= circle.radius * circle.radius;
+        result.result = lengthSquared <= circle.radius * circle.radius;
 
         // Calculate intersection point (approximation - uses closest point)
         if (result.result)
@@ -110,6 +142,12 @@ namespace Primitives2D
         return result;
     }
 
+
+    //-----------------------------------------------------------------------------
+    // Takes in LineSegment and Rect, returns true 
+    // (aswell as the postition of their first collision) if they collide,
+    // otherwise returns false
+    //-----------------------------------------------------------------------------
     Intersect CheckLineRectCollision(const LineSegment& line, const Rect& rect)
     {
         Intersect result;
@@ -187,6 +225,12 @@ namespace Primitives2D
         return result;
     }
 
+
+    //-----------------------------------------------------------------------------
+    // Takes in two LineSegments, returns true 
+    // (aswell as the postition of their first collision) if they collide,
+    // otherwise returns false
+    //-----------------------------------------------------------------------------
     Intersect CheckLineLineCollision(const Vec2& p1, const Vec2& p2, const Vec2& q1, const Vec2& q2)
     {
         Vec2 r(p2 - p1);
@@ -210,16 +254,25 @@ namespace Primitives2D
             return { false, Vec2() };
     }
 
+
+    //-----------------------------------------------------------------------------
+    // Takes in two Circles, returns true if they collide,
+    // otherwise returns false
+    //-----------------------------------------------------------------------------
     bool CheckCircleCircleCollision(const Circle& circle1, const Circle& circle2)
     {
-        float distanceSquared = std::pow(circle1.center.x - circle2.center.x, 2) +
-            std::pow(circle1.center.y - circle2.center.y, 2);
+        float lengthSquared = Vec2(circle1.center.x - circle2.center.x, circle1.center.y - circle2.center.y).LengthSquared();
 
         float radiusSum = circle1.radius + circle2.radius;
 
-        return distanceSquared <= radiusSum * radiusSum;
+        return lengthSquared <= radiusSum * radiusSum;
     }
 
+
+    //-----------------------------------------------------------------------------
+    // Takes in two Rects, returns true if they collide, otherwise returns false
+    // Unused, might remove
+    //-----------------------------------------------------------------------------
     bool CheckRectRectCollision(const Rect& rect1, const Rect& rect2)
     {
         // Check if one Rect is to the left/right of the other
@@ -234,6 +287,11 @@ namespace Primitives2D
         return true;
     }
 
+
+    //-----------------------------------------------------------------------------
+    // Takes in Rect and Circle, returns true if they collide, 
+    // otherwise returns false
+    //-----------------------------------------------------------------------------
     bool CheckRectCircleCollision(const Rect& rect, const Circle& circle)
     {
         // Find closest point on Rect to circle center
@@ -244,10 +302,9 @@ namespace Primitives2D
         closest.y = std::max(rect.min.y, std::min(circle.center.y, rect.max.y));
 
         // Calculate squared distance between closest point and circle center
-        float distanceSquared = std::pow(closest.x - circle.center.x, 2) +
-            std::pow(closest.y - circle.center.y, 2);
+        float lengthSquared = Vec2(closest.x - circle.center.x, closest.y - circle.center.y).LengthSquared();
 
         // Check if distance is less than or equal to circle radius
-        return distanceSquared <= circle.radius * circle.radius;
+        return lengthSquared <= circle.radius * circle.radius;
     }
 }

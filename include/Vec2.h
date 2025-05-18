@@ -1,37 +1,67 @@
 #pragma once
+#include <cmath>
+
+constexpr float PI = 3.1415927f;
 
 class Vec2
 {
 public:
-	float x, y;
+	float x = 0, y = 0;
 
 public:
-	Vec2();
-	Vec2(float x, float y);
-	~Vec2();
+	//-----------------------------------------------------------------------------
+	// Constructors and destructor
+	//-----------------------------------------------------------------------------
+	Vec2(float x, float y) : x(x), y(y) {}
+	Vec2() = default;
+	~Vec2() = default;
 
-	float Dot(const Vec2& other) const;
-	static float Dot(const Vec2& a, const Vec2& b);
-	float Length() const;
-	float LengthSquared() const;
-	Vec2 Normalized() const;
-	void Normalize();
+	//-----------------------------------------------------------------------------
+	// Class functions
+	//-----------------------------------------------------------------------------
+	float Dot(const Vec2& other)  const { return x * other.x + y * other.y; }
+	float Length()                const { return std::sqrt(x * x + y * y);  }
+	float LengthSquared()         const { return x * x + y * y;             }
+	Vec2 Normalized() const {
+		float length = Length();
+		return length > 0 ? *this / length : Vec2::Zero();
+	}
+	void Normalize() { 
+		float length = Length(); 
+		if (length > 0) *this /= length; 
+	}
 
-	static float Cross(const Vec2& a, const Vec2& b) { return a.x * b.y - a.y * b.x; }
+	//-----------------------------------------------------------------------------
+	// Static functions
+	//-----------------------------------------------------------------------------
+	static float Dot(const Vec2& a, const Vec2& b)    { return a.x * b.x + a.y * b.y; }
+	static float Cross(const Vec2& a, const Vec2& b)  { return a.x * b.y - a.y * b.x; }
+	
+	//-----------------------------------------------------------------------------
+	// Operators
+	//-----------------------------------------------------------------------------
+	Vec2 operator+(const Vec2& other)  const { return Vec2(x + other.x, y + other.y); }
+	Vec2 operator-(const Vec2& other)  const { return Vec2(x - other.x, y - other.y); }
+	Vec2 operator*(const float scalar) const { return Vec2(x * scalar, y * scalar);   }
+	Vec2 operator/(const float scalar) const { return Vec2(x / scalar, y / scalar);   }
 
-	Vec2 operator+(const Vec2& other)  const;
-	Vec2 operator-(const Vec2& other)  const;
-	Vec2 operator*(const float scalar) const;
-	Vec2 operator/(const float scalar) const;
+	//-----------------------------------------------------------------------------
+	// Compund assingment operators
+	//-----------------------------------------------------------------------------
+	Vec2& operator+=(const Vec2& other)   { x += other.x; y += other.y; return *this; }
+	Vec2& operator-=(const Vec2& other)   { x -= other.x; y -= other.y; return *this; }
+	Vec2& operator*=(const float scalar)  { x *= scalar; y *= scalar; return *this;   }
+	Vec2& operator/=(const float scalar)  { x /= scalar; y /= scalar; return *this;   }
 
-	Vec2& operator+=(const Vec2& other);
-	Vec2& operator-=(const Vec2& other);
-	Vec2& operator*=(const float scalar);
-	Vec2& operator/=(const float scalar);
+	//-----------------------------------------------------------------------------
+	// Comparative operators
+	//-----------------------------------------------------------------------------
+	bool operator==(const Vec2& other) const { return (x == other.x && y == other.y); }
+	bool operator!=(const Vec2& other) const { return (x != other.x || y != other.y); }
 
-	bool operator==(const Vec2& other) const;
-	bool operator!=(const Vec2& other) const;
-
+	//-----------------------------------------------------------------------------
+	// Static utility functions
+	//-----------------------------------------------------------------------------
 	static Vec2 Zero()  { return Vec2(0, 0);  }
 	static Vec2 One()   { return Vec2(1, 1);  }
 	static Vec2 Up()    { return Vec2(0, 1);  }

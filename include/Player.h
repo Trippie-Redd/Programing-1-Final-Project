@@ -17,7 +17,7 @@ class Player
 {
 public:
     Player();
-    ~Player();
+    ~Player() = default;
 
     void Update(const std::vector<Primitives2D::Rect>& environment,
         std::vector<GameObjects::AmmoCrate>& ammoCrates,
@@ -73,5 +73,4 @@ private:
     void CheckForEnemyCollisions(const std::vector<Primitives2D::Circle>& enemies);
 
     void UnlockGameObject(GameObjects::GameObjectsEnum type, uint16_t ID);
-
 };

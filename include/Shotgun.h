@@ -22,8 +22,8 @@ struct ShotgunBlast
 class Shotgun
 {
 public:
-    Shotgun();
-    ~Shotgun();
+    Shotgun()  = default;
+    ~Shotgun() = default;
 
     void Update(float deltaTime);
     void Render() const;
@@ -32,7 +32,7 @@ public:
     int GetMaxReserveAmmo()                                const { return m_maxReserveAmmo; }
     int GetCurrentMagAmmo()                                const { return m_currentMagAmmo; }
     int GetMaxMagAmmo()                                    const { return m_maxMagAmmo; }
-    const std::vector<ShotgunBlast>& GetShotgunBlastsRef() const{ return m_blasts; }
+    const std::vector<ShotgunBlast>& GetShotgunBlastsRef() const { return m_blasts; }
 
     void SetCurrentReserveAmmo(uint8_t value) { m_currentReserveAmmo = value; }
     void SetCurrentMagAmmo(uint8_t value)     { m_currentMagAmmo = value; }
@@ -46,9 +46,6 @@ public:
 private:
     std::vector<ShotgunBlast> m_blasts;
     Text m_ammoText;
-    Text m_testText;
-
-    float m_currentTransparency = 255;
 
     const int m_bulletAmount = 5;
     int m_maxMagAmmo = 8;

@@ -1,22 +1,23 @@
 #include "Player.h"
-
-#include <algorithm>
 #include "Game.h"
 #include "Settings.h"
 #include "AudioManager.h"
+#include <algorithm>
 
 using namespace Primitives2D;
 
-// ------------- Constructors/Destructor ------------- //
-
+//-----------------------------------------------------------------------------
+// Constructor, places player in the middle of the screen
+//-----------------------------------------------------------------------------
 Player::Player()
-    : m_position(Vec2(600, 400))
+    : m_position(Vec2(Settings::WINDOW_WIDTH / 2, Settings::WINDOW_HEIGHT / 2))
 {}
 
-Player::~Player() = default;
 
-// ----------------- Update/Render ------------------- //
-
+//-----------------------------------------------------------------------------
+// Applies velocity to position, checks for all player collisions, 
+// creates shape for body, updates shotgun and cursor  
+//-----------------------------------------------------------------------------
 void Player::Update(const std::vector<Rect>& environment,
                     std::vector<GameObjects::AmmoCrate>& ammoCrates,
                     std::vector<GameObjects::Key>& keys, 
@@ -44,19 +45,26 @@ void Player::Update(const std::vector<Rect>& environment,
     CheckForKeyPickups(keys);
     CheckForEnemyCollisions(enemies);
 
+    // Creates shape for body, updates shotgun and cursor  
     m_body = CreateUniformShape(m_position, 10.0f, 8);
     m_shotgun.Update(deltaTime);
     UpdateCursor(mousePos);
 }
 
+
+//-----------------------------------------------------------------------------
+// Renders body shape, shotgun blasts and cursor shape
+//-----------------------------------------------------------------------------
 void Player::Render() const
 {
     // No need to render anything if player is dead
     if (m_isDead) return;
 
+    // Renders body shape
     for (const LineSegment& line : m_body)
         line.Render(0, 255, 0, 255);
 
+    // Renders shoutgun blasts
     m_shotgun.Render();
    
     // Render cursor center shape
@@ -65,6 +73,10 @@ void Player::Render() const
         segment.Render(255, 0, 0, 255);
 }
 
+
+//-----------------------------------------------------------------------------
+// Creates cursor shape, lerps size based on distance from player position
+//-----------------------------------------------------------------------------
 void Player::UpdateCursor(const Vec2& mousePos)
 {
     m_mousePos = mousePos;
@@ -84,8 +96,10 @@ void Player::UpdateCursor(const Vec2& mousePos)
     m_cursorCurrentRadius = Lerp(m_cursorMinRadius, m_cursorMaxRadius, lerpLength);
 }
 
-// ---------------- Class functions ------------------ //
 
+//-----------------------------------------------------------------------------
+// Handles WASD/arrowkeys input
+//-----------------------------------------------------------------------------
 void Player::Move(enum Direction dir, double deltaTime)
 {
     float speed = m_currentSpeed;// * deltaTime;
@@ -110,6 +124,10 @@ void Player::Move(enum Direction dir, double deltaTime)
     }
 }
 
+
+//-----------------------------------------------------------------------------
+// Helper function for Shotgun::Shoot() 
+//-----------------------------------------------------------------------------
 void Player::Shoot(const std::vector<Rect>& environment, const Vec2& mousePos)
 {
     // Shouldn't shoot if player is dead
@@ -118,11 +136,22 @@ void Player::Shoot(const std::vector<Rect>& environment, const Vec2& mousePos)
     m_shotgun.Shoot(environment, m_position, mousePos, m_cursorCurrentRadius);
 }
 
+
+//-----------------------------------------------------------------------------
+// Helper function for Shotgun::Reload() 
+//-----------------------------------------------------------------------------
 void Player::Reload()
 {
+    // Shouldn't reload if player is dead
+    if (m_isDead) return;
+
     m_shotgun.Reload();
 }
 
+
+//-----------------------------------------------------------------------------
+// Checks for wall collisions and applies proper velocity adjustments
+//-----------------------------------------------------------------------------
 void Player::CheckForWallCollisions(const std::vector<Rect>& environment)
 {
     bool collided = false;
@@ -174,6 +203,11 @@ void Player::CheckForWallCollisions(const std::vector<Rect>& environment)
     }
 }
 
+
+//-----------------------------------------------------------------------------
+// Checks for transition box collisions and do normal wall collisions if 
+// transition box hasn't been unlocked, otherwise transition to new level
+//-----------------------------------------------------------------------------
 void Player::CheckForTransitionCollisions(const std::vector<GameObjects::TransitionBox>& transitionBoxes)
 {
     for (const GameObjects::TransitionBox& box : transitionBoxes)
@@ -249,6 +283,11 @@ void Player::CheckForTransitionCollisions(const std::vector<GameObjects::Transit
     }
 }
 
+
+//-----------------------------------------------------------------------------
+// Checks for ammo box collisions, player picks up ammo if current reserve 
+// ammo is not maxed out
+//-----------------------------------------------------------------------------
 void Player::CheckForAmmoPickups(std::vector<GameObjects::AmmoCrate>& ammoCrates)
 {
     // Don't pickup if ammo is already maxed out
@@ -272,6 +311,10 @@ void Player::CheckForAmmoPickups(std::vector<GameObjects::AmmoCrate>& ammoCrates
     }
 }
 
+
+//-----------------------------------------------------------------------------
+// Checks for key collisions, player picks up key upon collision
+//-----------------------------------------------------------------------------
 void Player::CheckForKeyPickups(std::vector<GameObjects::Key>& keys)
 {
     for (size_t i = 0; i < keys.size(); i++)
@@ -290,6 +333,10 @@ void Player::CheckForKeyPickups(std::vector<GameObjects::Key>& keys)
     }
 }
 
+
+//-----------------------------------------------------------------------------
+// Checks for enemy collisions, game restarts upon collision
+//-----------------------------------------------------------------------------
 void Player::CheckForEnemyCollisions(const std::vector<Primitives2D::Circle>& enemies)
 {
     for (const Primitives2D::Circle& enemy : enemies)
@@ -333,6 +380,10 @@ void Player::CheckForEnemyCollisions(const std::vector<Primitives2D::Circle>& en
     }
 }
 
+
+//-----------------------------------------------------------------------------
+// Unlocks specified game object in main game instance
+//-----------------------------------------------------------------------------
 void Player::UnlockGameObject(GameObjects::GameObjectsEnum type, uint16_t ID)
 {
     m_pGame->GetUnlockedObjects().set(static_cast<int>(type) * 65536 + ID);

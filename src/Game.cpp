@@ -1,24 +1,24 @@
 #include "Game.h"
-
 #include "Settings.h"
 #include "RendererManager.h"
 #include "AudioManager.h"
 #include <string>
-
-#include "rapidjson/document.h" 
-#include "rapidjson/filereadstream.h" 
-//#include "rapidjson/filewritestream.h" 
-//#include "rapidjson/writer.h" 
+#include <rapidjson/document.h>
+#include <rapidjson/filereadstream.h> 
 
 using namespace Primitives2D;
 
-// ------------- Constructors/Destructor ------------- //
 
+//-----------------------------------------------------------------------------
+// Constructor, initalizes SDL video, TTF and audio, creates window, renderer,
+// hides cursor, resets m_unlockedObjects and loads main menu level
+//-----------------------------------------------------------------------------
 Game::Game()
 {
+	// Fullscreen is set in Settings.h
 	int flags = Settings::FULLSCREEN ? SDL_WINDOW_FULLSCREEN : 0 ;
 
-
+	// Initalizes SDL video
 	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
 		std::cerr << "SDL video initialization failed! Error: " << SDL_GetError() << '\n';
@@ -30,6 +30,15 @@ Game::Game()
 	AudioManager::GetInstance().Init();
 	AudioManager::GetInstance().LoadAudio(AudioEnum::Music);
 
+	// Consider doing alot of this stuff before creating a window
+	Text::InitTextEngine();
+
+	// Sets all m_unlockedGameObjects bits to 0 and sets player pointer to this game
+	m_unlockedGameObjects.reset();
+	m_player.SetGamePointer(this);
+
+
+	// Creates an SDL window
 	m_window = SDL_CreateWindow(Settings::TITLE, Settings::WINDOW_WIDTH, Settings::WINDOW_HEIGHT, flags);
 	if (!m_window)
 	{
@@ -38,26 +47,26 @@ Game::Game()
 	}
 	std::cout << "Window succesfully created!" << '\n';
 
+	// Initalizes SDL Renderer and start main song
 	RendererManager::GetInstance().Init(m_window);
 	AudioManager::GetInstance().Play(AudioEnum::Music);
 
-	// Consider doing alot of this stuff before creating a window
-	Text::InitTextEngine();
+	// Need to load this stuff after initalizing RendererManager
 	GameObjects::LoadTextures();
-
-	SDL_HideCursor();
-
-	m_unlockedGameObjects.reset();
-	m_player.SetGamePointer(this);
-
 	LoadLevel(1);
 
 	// For initalizing delta time calculations
 	m_lastTime = SDL_GetTicks();
 
+	SDL_HideCursor();
+
 	m_isRunning = true;
 }
 
+
+//-----------------------------------------------------------------------------
+// Destructor, simply cleans up and shuts down all subsystems
+//-----------------------------------------------------------------------------
 Game::~Game()
 {
 	GameObjects::DestroyTextures();
@@ -69,8 +78,10 @@ Game::~Game()
 	std::cout << "Game cleaned up!" << '\n';
 }
 
-// ----------------- Update/Render ------------------- //
 
+//-----------------------------------------------------------------------------
+// Main game loop, calculates delta time, updates player and enemies
+//-----------------------------------------------------------------------------
 void Game::Update()
 {
 	// Calculate delta time
@@ -92,6 +103,7 @@ void Game::Update()
 	// No need to render or update enemies if player has already quit the game
 	if (!m_isRunning) return;
 
+	// Updates every enemy currently loaded
 	for (size_t i = 0; i < m_enemies.size(); i++)
 	{
 		m_enemies[i].Update(m_deltaTime, m_player, m_environment, m_player.GetShotgunRef());
@@ -105,7 +117,11 @@ void Game::Update()
 	Render();
 }
 
-void Game::Render()
+
+//-----------------------------------------------------------------------------
+// Called at end of Update, renders everything in the game
+//-----------------------------------------------------------------------------
+void Game::Render() const
 {
 	SDL_Renderer* renderer = RendererManager::GetInstance().GetRenderer();
 
@@ -113,33 +129,38 @@ void Game::Render()
 
 	SDL_RenderClear(renderer);
 
+	// Renders walls
 	for (const Primitives2D::Rect& wall : m_environment)
 	{
 		wall.Render(255, 255, 255, 255);
 	}
 
+	// Renders ammo crates
 	for (const GameObjects::AmmoCrate& ammoCrate : m_ammoCrates)
 	{
 		RenderTexture(ammoCrate, GameObjects::GameObjectsEnum::AmmoCrates);
 	}
 
+	// Renders transition boxes
 	for (const GameObjects::TransitionBox& transitionBox : m_transitions)
 	{
 		if (!m_unlockedGameObjects.test(static_cast<int>(GameObjects::GameObjectsEnum::Keys) * 65536 + transitionBox.keyID))
 			transitionBox.Render(199, 8, 27, 255);
 	}
 
+	// Renders keys
 	for (const GameObjects::Key& key : m_keys)
 	{
 		RenderTexture(key, GameObjects::GameObjectsEnum::Keys);
 	}
 
-	// TODO : CHANGE THIS TO CONST / don't sort sight raycast in render func
-	for (Enemy& enemy : m_enemies)
+	// Renders enemies and enemy sight
+	for (const Enemy& enemy : m_enemies)
 	{
 		enemy.Render();
 	}
 
+	// Render text
 	for (const Text& text : m_text)
 	{
 		if (!text.IsNull())
@@ -151,13 +172,10 @@ void Game::Render()
 	SDL_RenderPresent(renderer);
 }
 
-bool Game::Running() const
-{
-	return m_isRunning;
-}
 
-// ---------------- Class functions ------------------ //
-
+//-----------------------------------------------------------------------------
+// Called at beginning of Update, handles all user input
+//-----------------------------------------------------------------------------
 void Game::HandleEvents()
 {
 	SDL_Event event;
@@ -168,7 +186,8 @@ void Game::HandleEvents()
 		case SDL_EVENT_QUIT:
 			m_isRunning = false;
 			break;
-
+		
+		// Captures mouse movement
 		case SDL_EVENT_MOUSE_MOTION:
 		{
 			float x, y;
@@ -177,6 +196,7 @@ void Game::HandleEvents()
 			break;
 		}
 
+		// Used for shooting the shotgun
 		case SDL_EVENT_MOUSE_BUTTON_DOWN:
 			if (!m_mouseButtonPressed)
 			{
@@ -215,7 +235,7 @@ void Game::HandleEvents()
 		m_reloadPressed = false;
 	}
 
-	// Checks for movement input
+	// Checks for WASD/arrowkeys movement input
 	if (keystate[SDL_SCANCODE_UP] || keystate[SDL_SCANCODE_W])
 	{
 		m_player.Move(UP, m_deltaTime);
@@ -234,10 +254,16 @@ void Game::HandleEvents()
 	}
 }
 
+
+//-----------------------------------------------------------------------------
+// First unloads current level then loads a new level from a json file in 
+// levels folder
+//-----------------------------------------------------------------------------
 void Game::LoadLevel(uint16_t nexLevelID)
 {
 	using namespace rapidjson;
 
+	// Unloads current level
 	m_environment.clear();
 	m_ammoCrates.clear();
 	m_transitions.clear();
@@ -366,7 +392,6 @@ void Game::LoadLevel(uint16_t nexLevelID)
 		std::cerr << "There can max be 10 text elements at once, and level has: " << texts.Size() << '\n';
 		return;
 	}
-
 	for (size_t i = 0; i < texts.Size(); i++)
 	{
 		const Value& text = texts[i];

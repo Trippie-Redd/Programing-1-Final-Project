@@ -88,7 +88,7 @@ void Enemy::Update(float deltaTime, const Player& player, const std::vector<Rect
         m_currentState = EnemyStates::Chasing;
         ChasePlayer(deltaTime, player.GetOrigin());
     }  
-    else if (hasReachedTarget())
+    else if (HasReachedTarget())
     {
         m_currentState = EnemyStates::Idle;
         Idle(deltaTime);
@@ -101,6 +101,7 @@ void Enemy::Update(float deltaTime, const Player& player, const std::vector<Rect
 
     // Calculate FOV to visualize later
     m_sight.CastRaysAtVertices(m_position, environment, m_targetPosition, m_fov);
+    m_sight.SortRays();
 
     // Updates enemy position
     m_position += m_velocity * deltaTime;
@@ -112,7 +113,7 @@ void Enemy::Update(float deltaTime, const Player& player, const std::vector<Rect
 //-----------------------------------------------------------------------------
 // Renders sight/fov and body
 //-----------------------------------------------------------------------------
-void Enemy::Render()
+void Enemy::Render() const
 {
     // Used for tutorial enemies, don't render sight
     if (m_currentState != EnemyStates::Deactivated)
@@ -152,7 +153,7 @@ bool Enemy::CheckIfSeesPlayer(const Player& player, const std::vector<Rect>& env
 
     // Calculate angle between fov direction and direction to player
     float angleInRadians = acos(fovDirection.Dot(toPlayerDir));
-    float angleInDegrees = angleInRadians * (180.0f / 3.14159f);
+    float angleInDegrees = angleInRadians * (180.0f / PI);
 
     // Check if player is outside FOV angle
     if (angleInDegrees > m_fov / 2.0f) return false;
@@ -219,7 +220,7 @@ void Enemy::Idle(float deltaTime)
 void Enemy::ChasePlayer(float deltaTime, const Vec2& playerPos)
 {
     m_targetPosition = playerPos;
-    if (!hasReachedTarget())
+    if (!HasReachedTarget())
         FollowPath(deltaTime, m_chasingSpeed);
 }
 
