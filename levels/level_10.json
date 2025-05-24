@@ -1,0 +1,66 @@
+{
+    "walls": [
+        {
+            "x": 635,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 1260,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 660,
+            "y": 0,
+            "width": 200,
+            "height": 25
+        },
+        {
+            "x": 1060,
+            "y": 0,
+            "width": 200,
+            "height": 25
+        },
+        {
+            "x": 660,
+            "y": 1055,
+            "width": 200,
+            "height": 25
+        },
+        {
+            "x": 1060,
+            "y": 1055,
+            "width": 200,
+            "height": 25
+        }
+    ],
+    "enemies": [
+    ],
+    "ammoCrates": [
+    ],
+    "keys": [
+    ],
+    "transitionBoxes": [
+        {
+            "x": 860,
+            "y": 0,
+            "width": 200,
+            "height": 25,
+            "nextLevelID": 9,
+            "keyID": 0
+        },
+        {
+            "x": 860,
+            "y": 1055,
+            "width": 200,
+            "height": 25,
+            "nextLevelID": 11,
+            "keyID": 802
+        }
+    ],
+    "texts": [
+    ]
+}

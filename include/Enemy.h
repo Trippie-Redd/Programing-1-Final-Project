@@ -46,7 +46,6 @@ private:
     Raycast m_sight;
     Vec2 m_velocity;
     Vec2 m_position;
-    Vec2 m_playerDetectedPosition;
     Vec2 m_targetPosition;
     Primitives2D::LineSegment m_path;
     EnemyStates m_currentState;
@@ -55,7 +54,6 @@ private:
 
     float m_walkingSpeed;
     float m_chasingSpeed;
-    float m_currentSpeed;
     float m_fov = 60.0f;
     float m_idleTimer;
     float m_idleTime;

@@ -106,7 +106,7 @@ namespace GameObjects
     // for unlocking locked transition boxes
     //-----------------------------------------------------------------------------
     Key::Key(const Vec2& position, uint16_t ID)
-        : Rect(position, 32, 32) // Texture is 32x32 px
+        : Rect(position, 32, 32)
         , ID(ID)
     {}
 

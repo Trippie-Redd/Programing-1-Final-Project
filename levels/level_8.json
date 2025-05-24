@@ -1,0 +1,136 @@
+{
+    "walls": [
+        {
+            "x": 0,
+            "y": 0,
+            "width": 25,
+            "height": 465
+        },
+        {
+            "x": 0,
+            "y": 615,
+            "width": 25,
+            "height": 465
+        },
+        {
+            "x": 25,
+            "y": 1055,
+            "width": 1670,
+            "height": 25
+        },
+        {
+            "x": 1895,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 25,
+            "y": 0,
+            "width": 1870,
+            "height": 25
+        },
+        {
+            "x": 336,
+            "y": 345,
+            "width": 25,
+            "height": 400
+        },
+        {
+            "x": 711,
+            "y": 345,
+            "width": 25,
+            "height": 400
+        },
+        {
+            "x": 1221,
+            "y": 353,
+            "width": 25,
+            "height": 400
+        },
+        {
+            "x": 1596,
+            "y": 353,
+            "width": 25,
+            "height": 400
+        },
+        {
+            "x": 336,
+            "y": 745,
+            "width": 400,
+            "height": 25
+        },
+        {
+            "x": 1221,
+            "y": 328,
+            "width": 400,
+            "height": 25
+        }
+    ],
+    "enemies": [
+        {
+            "type": "Brute",
+            "pathStartX": 1295,
+            "pathStartY": 663,
+            "pathEndX": 1509,
+            "pathEndY": 398,
+            "ID": 801
+        },
+        {
+            "type": "Brute",
+            "pathStartX": 634,
+            "pathStartY": 663,
+            "pathEndX": 390,
+            "pathEndY": 398,
+            "ID": 802
+        },
+        {
+            "type": "Boss",
+            "pathStartX": 937,
+            "pathStartY": 144,
+            "pathEndX": 937,
+            "pathEndY": 918,
+            "ID": 803
+        }
+    ],
+    "ammoCrates": [
+        {
+            "x": 515,
+            "y": 670,
+            "ammoCount": 4,
+            "ID": 801
+        }
+    ],
+    "keys": [
+        {
+            "x": 1309,
+            "y": 405,
+            "ID": 801
+        },
+        {
+            "x": 1710,
+            "y": 100,
+            "ID": 802
+        }
+    ],
+    "transitionBoxes": [
+        {
+            "x": 0,
+            "y": 465,
+            "width": 25,
+            "height": 150,
+            "nextLevelID": 9,
+            "keyID": 801
+        },
+        {
+            "x": 1695,
+            "y": 1055,
+            "width": 200,
+            "height": 25,
+            "nextLevelID": 7,
+            "keyID": 0
+        }
+    ],
+    "texts": [
+    ]
+}

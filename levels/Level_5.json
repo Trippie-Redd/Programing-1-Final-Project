@@ -115,8 +115,6 @@
             "ID": 502
         }
     ],
-    "doors": [
-    ],
     "transitionBoxes": [
         {
             "x": 25,
@@ -131,7 +129,7 @@
             "y": 440,
             "width": 25,
             "height": 200,
-            "nextLevelID": 6,
+            "nextLevelID": 9,
             "keyID": 501
         }
     ],

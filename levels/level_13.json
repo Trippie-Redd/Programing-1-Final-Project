@@ -1,0 +1,82 @@
+{
+    "walls": [
+        {
+            "x": 435,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 460,
+            "y": 1055,
+            "width": 400,
+            "height": 25
+        },
+        {
+            "x": 1060,
+            "y": 1055,
+            "width": 400,
+            "height": 25
+        },
+        {
+            "x": 1460,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 1060,
+            "y": 0,
+            "width": 400,
+            "height": 25
+        },
+        {
+            "x": 460,
+            "y": 0,
+            "width": 400,
+            "height": 25
+        },
+        {
+            "x": 760,
+            "y": 132,
+            "width": 400,
+            "height": 25
+        }
+    ],
+    "enemies": [
+    ],
+    "ammoCrates": [
+    ],
+    "keys": [
+    ],
+    "transitionBoxes": [
+        {
+            "x": 860,
+            "y": 0,
+            "width": 200,
+            "height": 25,
+            "nextLevelID": 1,
+            "keyID": 0
+        },
+        {
+            "x": 860,
+            "y": 1055,
+            "width": 200,
+            "height": 25,
+            "nextLevelID": 12,
+            "keyID": 0
+        }
+    ],
+    "texts": [
+        {
+            "content": "YOU WON!",
+            "ptsize": 100,
+            "r": 0,
+            "g": 255,
+            "b": 42,
+            "a": 255,
+            "x": 735,
+            "y": 505
+        }
+    ]
+}

@@ -27,7 +27,7 @@ void Player::Update(const std::vector<Rect>& environment,
                     double deltaTime)
 {
     // Only thing that needs to be updated when player is dead is enemy collisions
-    // Because of sudo-timer
+    // Because of pseudo-timer
     if (m_isDead)
     {
         CheckForEnemyCollisions(enemies);

@@ -58,9 +58,9 @@
     "enemies": [
         {
             "type": "Brute",
-            "pathStartX": 918,
+            "pathStartX": 930,
             "pathStartY": 732,
-            "pathEndX": 918,
+            "pathEndX": 930,
             "pathEndY": 92,
             "ID": 401
         },
@@ -101,8 +101,6 @@
             "y": 713,
             "ID": 401
         }
-    ],
-    "doors": [
     ],
     "transitionBoxes": [
         {

@@ -1,0 +1,104 @@
+{
+    "walls": [
+        {
+            "x": 0,
+            "y": 0,
+            "width": 25,
+            "height": 440
+        },
+        {
+            "x": 0,
+            "y": 640,
+            "width": 25,
+            "height": 440
+        },
+        {
+            "x": 25,
+            "y": 1055,
+            "width": 835,
+            "height": 25
+        },
+        {
+            "x": 1060,
+            "y": 1055,
+            "width": 835,
+            "height": 25
+        },
+        {
+            "x": 1895,
+            "y": 615,
+            "width": 25,
+            "height": 465
+        },
+        {
+            "x": 1895,
+            "y": 0,
+            "width": 25,
+            "height": 465
+        },
+        {
+            "x": 1160,
+            "y": 0,
+            "width": 735,
+            "height": 25
+        },
+        {
+            "x": 25,
+            "y": 0,
+            "width": 735,
+            "height": 25
+        }
+    ],
+    "enemies": [
+    ],
+    "ammoCrates": [
+    ],
+    "keys": [
+    ],
+    "transitionBoxes": [
+        {
+            "x": 0,
+            "y": 440,
+            "width": 25,
+            "height": 200,
+            "nextLevelID": 5,
+            "keyID": 501
+        },
+        {
+            "x": 1895,
+            "y": 465,
+            "width": 25,
+            "height": 150,
+            "nextLevelID": 8,
+            "keyID": 801
+        },
+        {
+            "x": 860,
+            "y": 1055,
+            "width": 200,
+            "height": 25,
+            "nextLevelID": 10,
+            "keyID": 502
+        },
+        {
+            "x": 760,
+            "y": 0,
+            "width": 400,
+            "height": 25,
+            "nextLevelID": 12,
+            "keyID": 0
+        }
+    ],
+    "texts": [
+        {
+            "content": "NO TURNING BACK",
+            "ptsize": 60,
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255,
+            "x": 700,
+            "y": 106
+        }
+    ]
+}

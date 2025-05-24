@@ -54,14 +54,10 @@ void Enemy::Update(float deltaTime, const Player& player, const std::vector<Rect
     for (const ShotgunBlast& blast : blasts)
     {
         const std::vector<LineSegment>& lines = blast.collisionRays.GetRays();
-
         for (const LineSegment& line : lines)
         {
             if (!CheckLineCircleCollision(line, m_hitbox).result) continue;
-           
-            // If the enemy hitbox collides with a ray, remove 1 health
-            // and make enemy chase player
-            m_health--; 
+            m_health--;
             m_targetPosition = player.GetOrigin();
         }
     }
@@ -74,39 +70,54 @@ void Enemy::Update(float deltaTime, const Player& player, const std::vector<Rect
         return;
     }
 
-    // Used for tutorial enemies, do nothing 
+    // Used for tutorial enemies, do nothing
     if (m_currentState == EnemyStates::Deactivated) return;
 
     m_sight.ResetRays();
-
-    // Saves last state enemy was in
     m_lastState = m_currentState;
 
-    // Check which state enemy is in, state machine
-    if (CheckIfSeesPlayer(player, environment))
+    bool canSeePlayer = CheckIfSeesPlayer(player, environment);
+    bool hasReachedTarget = HasReachedTarget();
+
+    // State machine with clearer logic than before
+    if (canSeePlayer)
     {
         m_currentState = EnemyStates::Chasing;
         ChasePlayer(deltaTime, player.GetOrigin());
-    }  
-    else if (HasReachedTarget())
+    }
+    else if (m_currentState == EnemyStates::Idle)
     {
+        // Continue idling until timer expires
+        Idle(deltaTime);
+
+        // Exit idle when timer is done
+        if (m_idleTimer <= 0.0f)
+        {
+            m_currentState = EnemyStates::Normal;
+            // Timer will be reset next time we enter idle
+        }
+    }
+    else if (hasReachedTarget)
+    {
+        // Enter idle state
         m_currentState = EnemyStates::Idle;
         Idle(deltaTime);
     }
     else
     {
+        // Normal patrolling
         m_currentState = EnemyStates::Normal;
         FollowPath(deltaTime, m_walkingSpeed);
     }
 
-    // Calculate FOV to visualize later
+    // Used for visualising sight/fov
     m_sight.CastRaysAtVertices(m_position, environment, m_targetPosition, m_fov);
     m_sight.SortRays();
 
-    // Updates enemy position
+    // Applies velocity to positon
     m_position += m_velocity * deltaTime;
     m_hitbox.center = m_position;
-    m_velocity *= 0.98f;
+    m_velocity *= 0.95f;
 }
 
 
@@ -188,7 +199,7 @@ void Enemy::FollowPath(float deltaTime, float speed)
     const Vec2 direction = m_targetPosition - m_position;
 
     if (direction.Length() > 0.001f)
-        m_velocity += direction.Normalized() * speed * deltaTime * 60.0f;
+        m_velocity = direction.Normalized() * speed * 7.5f;
 }
 
 
@@ -199,17 +210,19 @@ void Enemy::Idle(float deltaTime)
 {
     m_velocity = Vec2::Zero(); // Always stop while idling
 
-    if (m_lastState == EnemyStates::Idle && m_idleTimer <= 0.0f)
+    // If we just entered idle state, reset the timer
+    if (m_lastState != EnemyStates::Idle)
     {
-        m_targetPosition = m_targetPosition == m_path.end ? m_path.start : m_path.end; // When idle is over 
+        m_idleTimer = m_idleTime;
     }
-    else if (m_lastState == EnemyStates::Idle)
+
+    // Always decrement timer while idling
+    m_idleTimer -= deltaTime;
+
+    // When timer expires, switch target
+    if (m_idleTimer <= 0.0f)
     {
-        m_idleTimer -= deltaTime; // Counts down
-    }
-    else
-    {
-        m_idleTimer = m_idleTime; // Reset timer
+        m_targetPosition = (m_targetPosition == m_path.end) ? m_path.start : m_path.end;
     }
 }
 
@@ -226,7 +239,7 @@ void Enemy::ChasePlayer(float deltaTime, const Vec2& playerPos)
 
 
 //-----------------------------------------------------------------------------
-// Function to more cleanly set enemy stats in constructor
+// Function to more easily set enemy stats in constructor
 //-----------------------------------------------------------------------------
 void Enemy::SetStats(float hitboxRadius, 
                      float walkingSpeed,  

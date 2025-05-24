@@ -1,0 +1,102 @@
+{
+    "walls": [
+        {
+            "x": 0,
+            "y": 0,
+            "width": 25,
+            "height": 465
+        },
+        {
+            "x": 0,
+            "y": 615,
+            "width": 25,
+            "height": 465
+        },
+        {
+            "x": 25,
+            "y": 0,
+            "width": 1670,
+            "height": 25
+        },
+        {
+            "x": 25,
+            "y": 1055,
+            "width": 1870,
+            "height": 25
+        },
+        {
+            "x": 1895,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 1280,
+            "y": 165,
+            "width": 25,
+            "height": 750
+        }
+    ],
+    "enemies": [
+        {
+            "type": "Fast",
+            "pathStartX": 1129,
+            "pathStartY": 210,
+            "pathEndX": 238,
+            "pathEndY": 517,
+            "ID": 701
+        },
+        {
+            "type": "Fast",
+            "pathStartX": 1129,
+            "pathStartY": 517,
+            "pathEndX": 238,
+            "pathEndY": 517,
+            "ID": 702
+        },
+        {
+            "type": "Boss",
+            "pathStartX": 1129,
+            "pathStartY": 825,
+            "pathEndX": 238,
+            "pathEndY": 517,
+            "ID": 703
+        }
+    ],
+    "ammoCrates": [
+        {
+            "x": 1374,
+            "y": 377,
+            "ammoCount": 2,
+            "ID": 701
+        },
+        {
+            "x": 1439,
+            "y": 662,
+            "ammoCount": 1,
+            "ID": 702
+        }
+    ],
+    "keys": [
+    ],
+    "transitionBoxes": [
+        {
+            "x": 0,
+            "y": 465,
+            "width": 25,
+            "height": 150,
+            "nextLevelID": 6,
+            "keyID": 201
+        },
+        {
+            "x": 1695,
+            "y": 0,
+            "width": 200,
+            "height": 25,
+            "nextLevelID": 8,
+            "keyID": 0
+        }
+    ],
+    "texts": [
+    ]
+}

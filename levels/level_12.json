@@ -1,0 +1,111 @@
+{
+    "walls": [
+        {
+            "x": 435,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 460,
+            "y": 1055,
+            "width": 1000,
+            "height": 25
+        },
+        {
+            "x": 1460,
+            "y": 0,
+            "width": 25,
+            "height": 1080
+        },
+        {
+            "x": 1060,
+            "y": 0,
+            "width": 400,
+            "height": 25
+        },
+        {
+            "x": 460,
+            "y": 0,
+            "width": 400,
+            "height": 25
+        },
+        {
+            "x": 760,
+            "y": 132,
+            "width": 400,
+            "height": 25
+        }
+    ],
+    "enemies": [
+        {
+            "type": "Tutorial",
+            "pathStartX": 600,
+            "pathStartY": 213,
+            "pathEndX": 600,
+            "pathEndY": 213,
+            "ID": 1201
+        },
+        {
+            "type": "Tutorial",
+            "pathStartX": 1300,
+            "pathStartY": 213,
+            "pathEndX": 1300,
+            "pathEndY": 213,
+            "ID": 1202
+        },
+        {
+            "type": "Tutorial",
+            "pathStartX": 600,
+            "pathStartY": 863,
+            "pathEndX": 600,
+            "pathEndY": 863,
+            "ID": 1203
+        },
+        {
+            "type": "Tutorial",
+            "pathStartX": 1300,
+            "pathStartY": 863,
+            "pathEndX": 1300,
+            "pathEndY": 863,
+            "ID": 1204
+        },
+        {
+            "type": "Boss",
+            "pathStartX": 1300,
+            "pathStartY": 863,
+            "pathEndX": 600,
+            "pathEndY": 213,
+            "ID": 1205
+        },
+        {
+            "type": "Boss",
+            "pathStartX": 600,
+            "pathStartY": 863,
+            "pathEndX": 1300,
+            "pathEndY": 213,
+            "ID": 1206
+        }
+    ],
+    "ammoCrates": [
+    ],
+    "keys": [
+        {
+            "x": 944,
+            "y": 524,
+            "ID": 1201
+        }
+    ],
+    "transitionBoxes": [
+        {
+            "x": 860,
+            "y": 0,
+            "width": 200,
+            "height": 25,
+            "nextLevelID": 13,
+            "keyID": 1201
+        }
+    ],
+    "texts": [
+    ]
+}
