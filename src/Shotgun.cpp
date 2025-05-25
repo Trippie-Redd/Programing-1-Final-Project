@@ -1,4 +1,5 @@
 #include "Shotgun.h"
+#include "AudioManager.h"
 
 //-----------------------------------------------------------------------------
 // Decreased opacity of shotgun rays, removes collision rays after 1 frame
@@ -85,6 +86,7 @@ void Shotgun::Shoot(const std::vector<Primitives2D::Rect>& environment, const Ve
     }
 
     m_blasts.emplace_back(newBlast, 255.0f);
+    AudioManager::GetInstance().Play(AudioEnum::ShotgunShoot);
 }
 
 
@@ -109,4 +111,5 @@ void Shotgun::Reload()
     // Change ammo counts
     m_currentReserveAmmo -= ammoToReload;
     m_currentMagAmmo += ammoToReload;
+    AudioManager::GetInstance().Play(AudioEnum::ShotgunReload);
 }

@@ -305,6 +305,7 @@ void Player::CheckForAmmoPickups(std::vector<GameObjects::AmmoCrate>& ammoCrates
 
             // Remove object from list
             ammoCrates.erase(ammoCrates.begin() + i);
+            AudioManager::GetInstance().Play(AudioEnum::AmmoPickedUp);
 
             break;
         }
@@ -327,6 +328,7 @@ void Player::CheckForKeyPickups(std::vector<GameObjects::Key>& keys)
 
             // Remove object from list
             keys.erase(keys.begin() + i);
+            AudioManager::GetInstance().Play(AudioEnum::KeyPickedUp);
 
             break;
         }

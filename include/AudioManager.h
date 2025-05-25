@@ -6,15 +6,14 @@
 
 enum class AudioEnum
 {
-	Music = 0,
-	ShotgunShoot,
-	ShotgunHit,
-	EnemyKilled,
-	AmmoPickedUp,
-	KeyPickedUp,
-	PlayerWalking,
-	GameOver,
-	AUDIO_ENUM_COUNT = 8
+	Music = 0,     // I
+	ShotgunShoot,  // I I
+	ShotgunReload, // I I
+	EnemyKilled,   // I I
+	AmmoPickedUp,  // I I
+	KeyPickedUp,   // I I
+	GameOver,      // I I
+	AUDIO_ENUM_COUNT = 7
 };
 
 class AudioManager
@@ -37,8 +36,6 @@ public:
 private:
 	AudioManager()  = default;//: m_audioChunks{};
 	~AudioManager() = default;
-
-	static SDL_AudioSpec s_audioSpec;
 
 	Mix_Chunk* m_audioChunks[static_cast<int>(AudioEnum::AUDIO_ENUM_COUNT)];
 

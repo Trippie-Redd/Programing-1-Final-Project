@@ -28,7 +28,7 @@ Game::Game()
 
 	// Initalize and load audio before creating window, because it's ugly otherwise
 	AudioManager::GetInstance().Init();
-	AudioManager::GetInstance().LoadAudio(AudioEnum::Music);
+	AudioManager::GetInstance().LoadAllAudio();
 
 	// Consider doing alot of this stuff before creating a window
 	Text::InitTextEngine();

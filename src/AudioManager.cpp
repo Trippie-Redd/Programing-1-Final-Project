@@ -1,8 +1,5 @@
 #include "AudioManager.h"
 
-// Prevents linker errors
-SDL_AudioSpec AudioManager::s_audioSpec = {};
-
 //-----------------------------------------------------------------------------
 // Returns reference to singelton instance
 //-----------------------------------------------------------------------------
@@ -26,15 +23,8 @@ bool AudioManager::Init()
         return false;
     }
 
-    // Creates a spec for audio player to use
-    s_audioSpec = {
-        SDL_AUDIO_U8, // 8-bit audio
-        1,            // Mono channel
-        44100         // Frequency in hz
-    };
-
     // Opens an audio device for SDL_mixer to use
-    if (!Mix_OpenAudio(0, &s_audioSpec))
+    if (!Mix_OpenAudio(0, NULL))
     {
         std::cerr << "SDL_mixer could not open an audio device! Error: " << SDL_GetError() << '\n';
         return false;
@@ -201,11 +191,10 @@ std::string AudioManager::GetAudioFilepath(AudioEnum audioID) const
     {
     case AudioEnum::Music:          return "music.wav";
     case AudioEnum::ShotgunShoot:   return "shotgunShoot.wav";
-    case AudioEnum::ShotgunHit:     return "shotgunHit.wav";
+    case AudioEnum::ShotgunReload:  return "shotgunReload.wav";
     case AudioEnum::EnemyKilled:    return "enemyKilled.wav";
     case AudioEnum::AmmoPickedUp:   return "ammoPickedUp.wav";
     case AudioEnum::KeyPickedUp:    return "keyPickedUp.wav";
-    case AudioEnum::PlayerWalking:  return "playerWalking.wav";
     case AudioEnum::GameOver:       return "gameOver.wav";
     default:
         if (audioID != AudioEnum::AUDIO_ENUM_COUNT) // Avoid error message for the count itself

@@ -11,7 +11,6 @@ All dependencies are automatically downloaded using CMake FetchContent the first
 
 - Made using the C++20 standard
 - Requires CMake 3.16 or higher
-- Other
 - [SDL3](https://github.com/libsdl-org/SDL)
 - [SDL_ttf](https://github.com/libsdl-org/SDL_ttf)
 - [SDL_mixer](https://github.com/libsdl-org/SDL_mixer)
@@ -58,7 +57,7 @@ I could have tried implementing an Entity-Component-System (ECS) architecture. T
 
 My CMake setup is also not ideal. I didn’t take the time to properly learn the CMake API and instead relied on AI-generated code. As a result, I had to reload my configuration every time I changed assets or level files, which was tedious and rather time consuming.
 
-Non-programming elements—such as level design, audio, and game balance—could definitely be improved. I found myself losing interest and motivation after finishing the core programming, which made these aspects suffer. I’ve learned that narrative and environmental design still interest me, but pure level design or balancing isn’t something I particularly enjoy.
+Non-programming elements—such as level design, audio, and game balance—could definitely be improved. I found myself losing interest and motivation after finishing the core programming, which made these aspects suffer. I’ve learned that pure level design and balancing isn’t something I particularly enjoy.
 
 
 ### Was there anything that you thought turned out particularly well?

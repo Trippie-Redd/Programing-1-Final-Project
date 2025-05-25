@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "Shotgun.h"
 #include "Game.h"
+#include "AudioManager.h"
 #include <bitset>
 
 using namespace Primitives2D;
@@ -67,6 +68,7 @@ void Enemy::Update(float deltaTime, const Player& player, const std::vector<Rect
     {
         m_pGame->GetUnlockedObjects().set(static_cast<int>(GameObjects::GameObjectsEnum::Enemies) * 65536 + m_ID);
         isDead = true;
+        AudioManager::GetInstance().Play(AudioEnum::EnemyKilled);
         return;
     }
 
